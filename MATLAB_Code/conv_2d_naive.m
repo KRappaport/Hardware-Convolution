@@ -27,7 +27,8 @@ function resultant = conv_2d_naive(input,kernel)
         end
 
         % Set end row value such that input and kernel are in bounds
-        if (last_row = ker_base_row - 1) > in_row_lgth
+        last_row = ker_base_row - 1;
+        if last_row > in_row_lgth
             last_row = in_row_lgth;
         end
 
@@ -42,7 +43,8 @@ function resultant = conv_2d_naive(input,kernel)
             end
 
             % Set end row value such that input and kernel are in bounds
-            if (last_column = ker_base_column - 1) > in_column_lgth
+            last_column = ker_base_column - 1;
+            if last_column > in_column_lgth
                 last_column = in_column_lgth;
             end
 
