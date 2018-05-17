@@ -17,9 +17,14 @@ function resultant = conv_2d_naive(input,kernel)
     resultant = zeros(in_row_lgth, in_column_lgth, in_depth);
 
     % Actual convolution starts here:
-    % First 2 for loops determine the element of the result to find
-    % and the second 2 match up the proper input and kernel elements.
-    % In total 4 nested for loops.
+    % First for loop sets the third dimension, location in the third dimension
+    % refers to a 2D matrix that will be convolved (the convolution is 2D the
+    % third dimension can be seen as just a list of 2D matrices and the convolution
+    % only takes place between the first two dimensions of input and kernel for
+    % equal third dimension indices).
+    % Second 2 for loops determine the element of the result to find
+    % and the final 2 match up the proper input and kernel elements.
+    % In total 5 nested for loops.
 
     for result_depth = 1:in_depth
         for result_row = 1:in_row_lgth
