@@ -70,9 +70,9 @@ function resultant = conv_2d_naive(input,kernel)
                             *kernel(ker_row, (ker_base_column - in_column), result_depth));
 
                     end
-
                 end
             end
         end
+    end
 
 end
