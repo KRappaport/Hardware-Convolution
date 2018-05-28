@@ -1,4 +1,4 @@
-function resultant = parfor_input_z_naive_3d_conv_2(input,kernel)
+function resultant = parfor_input_y_naive_3d_conv_2(input,kernel)
 
 
 %flip the input to match matlab conv later on
@@ -61,9 +61,9 @@ resultant = zeros(in_x,in_y,in_z);
 kernel = flip(kernel,3);
 kernel = rot90(kernel,2);
 
-parfor z = 1 : in_z;
+for z = 1 : in_z
     
-    for y = 1: in_y
+    parfor y = 1: in_y
         
         for x = 1 : in_x 
             
@@ -73,7 +73,7 @@ parfor z = 1 : in_z;
             %keep track of #mult in conv set for debug 
             tracker = 0;
             
-            for m_z = 1 : ker_z;
+            for m_z = 1 : ker_z
                 
                 for m_y = 1 : ker_y
                     
