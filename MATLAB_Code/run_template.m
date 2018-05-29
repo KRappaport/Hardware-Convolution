@@ -3,18 +3,18 @@ run_amount = 20;
 
 %diff kernals
 
-in = rand(11,11,11);
+in = rand(15,15,3);
 
-my_time_ker = zeros(1,17);
-mat_time_ker = zeros(1,17);
+my_time_ker = zeros(1,15);
+mat_time_ker = zeros(1,15);
 
 for run_number = 1:run_amount
     time_index_ker = 1;
-    for k_s = 1:2:33
-        ker = rand(k_s,k_s,11);
+    for k_s = 5:2:33
+        ker = rand(k_s,k_s,3);
 
         tic;
-        result = naive_3d_conv_2(in,ker);
+        result = conv_2d_simcha(in,ker);
         mycode_time = toc;
         my_time_ker(time_index_ker) = my_time_ker(time_index_ker) + mycode_time;
 
@@ -36,7 +36,7 @@ mat_time_ker = mat_time_ker./run_amount;
 
 % regular plot take
 
-k_s = 1:2:33;
+k_s = 5:2:33;
 
 figure
 plot(k_s,my_time_ker);
@@ -65,7 +65,7 @@ ylabel('time [ms]');
 
 
 
-
+%{
 %different image sizes
 
 ker = rand(3,3,3);
