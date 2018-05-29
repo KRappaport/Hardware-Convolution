@@ -156,15 +156,10 @@ function result = conv2d(input,kernel)
                 %for each iteration, just take a snippit of the input matrix and mult by
                 %kernel
 
-                
-                z_slice
-                result_x
-                result_y
-                
-                
+              
                 input_snip = padd_input( ((result_x+floor_ker_x-snip_left_end_x):(result_x+floor_ker_x+snip_right_end_x)),...
-                    ((result_y+floor_ker_y-snip_left_end_y):(result_y+floor_ker_y+snip_right_end_y)),...
-                    z_slice);
+                        ((result_y+floor_ker_y-snip_left_end_y):(result_y+floor_ker_y+snip_right_end_y)),...
+                        z_slice);
 
                 multiplications = kernel(:,:,z_slice).*input_snip;
                 summation2D = sum(multiplications,3);
