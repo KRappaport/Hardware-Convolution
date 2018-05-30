@@ -19,6 +19,12 @@ mat_result = zeros(11,11,11);
 conv_2d_naive_time = zeros(1,17);
 mat_time = zeros(1,17);
 
+
+statuss = 'Status:    ';
+updstat = ['0%%  [' repmat(' ', 1, run_amount) ']'];
+delstr = repmat('\b', 1, length(updstat) - 1);
+fprintf([statuss, updstat]);
+
 for run_number = 1:run_amount
     time_index_ker = 1;
     for k_s = 1:2:33
@@ -41,6 +47,12 @@ for run_number = 1:run_amount
 
 
     end
+
+    pdn = run_number*100/run_amount;
+    updstat = [num2str(pdn, '%4.2f') '%%  [' repmat('*', 1, run_number) repmat(' ', 1, run_amount-run_number) ']'];
+    fprintf([delstr, updstat]);
+    delstr = repmat('\b', 1, length(updstat) - 1);
+
 end
 
 conv_2d_naive_time = conv_2d_naive_time./run_amount;
@@ -76,3 +88,5 @@ title('Run Time for Various Kernel Sizes: convn (MATLAB)');
 xlabel('kernel size');
 ylabel('time [ms]');
 hold off;
+
+ fprintf('\n');

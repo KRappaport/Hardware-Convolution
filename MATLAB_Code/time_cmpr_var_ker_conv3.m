@@ -12,6 +12,11 @@ in = rand(11,11,11);
 my_time_ker = zeros(1,17);
 mat_time_ker = zeros(1,17);
 
+statuss = 'Status:    ';
+updstat = ['0%%  [' repmat(' ', 1, run_amount) ']'];
+delstr = repmat('\b', 1, length(updstat) - 1);
+fprintf([statuss, updstat]);
+
 for run_number = 1:run_amount
     time_index_ker = 1;
     for k_s = 1:2:33
@@ -33,6 +38,12 @@ for run_number = 1:run_amount
 
 
     end
+
+    pdn = run_number*100/run_amount;
+    updstat = [num2str(pdn, '%4.2f') '%%  [' repmat('*', 1, run_number) repmat(' ', 1, run_amount-run_number) ']'];
+    fprintf([delstr, updstat]);
+    delstr = repmat('\b', 1, length(updstat) - 1);
+
 end
 
 my_time_ker = my_time_ker./run_amount;
@@ -66,3 +77,5 @@ plot(k_s,mat_time_ker.*1E3,'red');
 title('matlab functions time - KERNAL');
 xlabel('kernal size');
 ylabel('time [ms]');
+
+fprintf('\n');

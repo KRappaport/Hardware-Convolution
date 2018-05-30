@@ -14,6 +14,11 @@ my_time_in_2 = zeros(1,7);
 mat_time_in_2 = zeros(1,7);
 mat_time_in_1 = zeros(1,7);
 
+statuss = 'Status:    ';
+updstat = ['0%%  [' repmat(' ', 1, run_amount) ']'];
+delstr = repmat('\b', 1, length(updstat) - 1);
+fprintf([statuss, updstat]);
+
 for run_number = 1:run_amount
     time_index_in_1 = 1;
     time_index_in_2 = 1;
@@ -45,9 +50,14 @@ for run_number = 1:run_amount
                 mat_time_in_2(time_index_in_2) = mat_time_in_2(time_index_in_2) + matlabcode_time;
                 time_index_in_2 =  time_index_in_2+1;
             end
-
         end
     end
+
+    pdn = run_number*100/run_amount;
+    updstat = [num2str(pdn, '%4.2f') '%%  [' repmat('*', 1, run_number) repmat(' ', 1, run_amount-run_number) ']'];
+    fprintf([delstr, updstat]);
+    delstr = repmat('\b', 1, length(updstat) - 1);
+
 end
 
 my_time_in_1 = my_time_in_1./run_amount;
@@ -114,3 +124,5 @@ xlabel('image size');
 ylabel('time');
 %}
 %}
+
+ fprintf('\n');
