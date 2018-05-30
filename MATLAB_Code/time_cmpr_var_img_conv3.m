@@ -1,5 +1,9 @@
 
-run_amount = 20;
+if ((exist('run_amount')==0) || (isnumeric(run_amount)==0) || (run_amount <= 0))
+    run_amount = 20;
+else
+    run_amount = floor(run_amount);
+end
 
 %different image sizes
 

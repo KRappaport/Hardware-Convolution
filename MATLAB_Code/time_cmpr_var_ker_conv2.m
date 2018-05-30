@@ -1,8 +1,14 @@
 % This script is used to compare the run time of conv_2d_naive against that of
 % convn (MATLAB's function), for 2D convolution between an image with constant
-% time and a kernel with different sizes.  
+% time and a kernel with different sizes.
 
-run_amount = 100;
+
+if ((exist('run_amount')==0) || (isnumeric(run_amount)==0) || (run_amount <= 0))
+    run_amount = 20;
+else
+    run_amount = floor(run_amount);
+end
+
 
 %diff kernals
 
@@ -10,8 +16,8 @@ in = rand(11,11,11);
 
 mat_result = zeros(11,11,11);
 
-conv_2d_naive_time = zeros(1,27);
-mat_time = zeros(1,27);
+conv_2d_naive_time = zeros(1,17);
+mat_time = zeros(1,17);
 
 for run_number = 1:run_amount
     time_index_ker = 1;
@@ -42,7 +48,7 @@ mat_time = mat_time./run_amount;
 
 % regular plot take
 
-k_s = 1:2:53;
+k_s = 1:2:33;
 
 figure
 plot(k_s,conv_2d_naive_time.*1E3);
