@@ -13,8 +13,8 @@ end
 
 ker = rand(3,3,3);
 
-my_time_in = zeros(1,50);
-mat_time_in = zeros(1,50);
+naive_3d_conv_2_time = zeros(1,50);
+mat_time = zeros(1,50);
 
 statuss = 'Status:    ';
 updstat = ['0%%  [' repmat(' ', 1, run_amount) ']'];
@@ -29,12 +29,12 @@ for run_number = 1:run_amount
         tic;
         result = naive_3d_conv_2(in,ker);
         mycode_time = toc;
-        my_time_in(time_index_in) = my_time_in(time_index_in) + mycode_time;
+        naive_3d_conv_2_time(time_index_in) = naive_3d_conv_2_time(time_index_in) + mycode_time;
 
         tic;
         mat_result = convn(in,ker,'same');
         matlabcode_time = toc;
-        mat_time_in(time_index_in) = mat_time_in(time_index_in) + matlabcode_time;
+        mat_time(time_index_in) = mat_time(time_index_in) + matlabcode_time;
 
         time_index_in =  time_index_in + 1;
 
@@ -47,20 +47,20 @@ for run_number = 1:run_amount
 
 end
 
-my_time_in = my_time_in./run_amount;
-mat_time_in = mat_time_in./run_amount;
+naive_3d_conv_2_time = naive_3d_conv_2_time./run_amount;
+mat_time = mat_time./run_amount;
 
 i_s = 10:20:1000;
 % regular plot take 1
 
 figure
-plot(i_s./10,my_time_in);
+plot(i_s./10,naive_3d_conv_2_time);
 hold on;
-plot(i_s./10,mat_time_in);
-title('My fxn vs. Matlab fxn in time - INPUT');
+plot(i_s./10,mat_time);
+title('Run Time for Various Image Sizes: naive_3d_conv_2 vs. convn (MATLAB)', 'Interpreter', 'none');
 xlabel('image size [\times10]');
 ylabel('time [s]');
-legend('my time','matlab time','Location','northwest');
+legend('naive\_3d\_conv\_2','convn (MATLAB)','Location','northwest');
 hold off;
 
 
@@ -69,16 +69,16 @@ hold off;
 figure
 hold on;
 subplot(2,1,1);
-plot(i_s./10,my_time_in);
-title('my functions time - INPUT');
+plot(i_s./10,naive_3d_conv_2_time);
+title('Run Time for Various Image Sizes: naive_3d_conv_2', 'Interpreter', 'none');
 xlabel('image size [\times10]');
 ylabel('time [s]');
 
 subplot(2,1,2);
-plot(i_s./10,mat_time_in.*1E3);
-title('matlab functions time - INPUT');
+plot(i_s./10,mat_time.*1E3);
+title('Run Time for Various Kernel Sizes: convn (MATLAB)');
 xlabel('image size [\times10]');
-ylabel('time[ms]');
+ylabel('time [ms]');
 hold off;
 
 

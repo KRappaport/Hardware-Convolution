@@ -1,3 +1,7 @@
+% This script is used to compare the run time of naive_3d_conv_2 against that of
+% convn (MATLAB's function), for 3D convolution between an image with constant
+% size and a kernel with different sizes.
+
 
 if ((exist('run_amount')==0) || (isnumeric(run_amount)==0) || (run_amount <= 0))
     run_amount = 20;
@@ -9,8 +13,8 @@ end
 
 in = rand(11,11,11);
 
-my_time_ker = zeros(1,17);
-mat_time_ker = zeros(1,17);
+naive_3d_conv_2_time = zeros(1,17);
+mat_time = zeros(1,17);
 
 statuss = 'Status:    ';
 updstat = ['0%%  [' repmat(' ', 1, run_amount) ']'];
@@ -25,14 +29,14 @@ for run_number = 1:run_amount
         tic;
         result = naive_3d_conv_2(in,ker);
         mycode_time = toc;
-        my_time_ker(time_index_ker) = my_time_ker(time_index_ker) + mycode_time;
+        naive_3d_conv_2_time(time_index_ker) = naive_3d_conv_2_time(time_index_ker) + mycode_time;
 
 
 
         tic;
         mat_result = convn(in,ker,'same');
         matlabcode_time = toc;
-        mat_time_ker(time_index_ker) = mat_time_ker(time_index_ker) + matlabcode_time;
+        mat_time(time_index_ker) = mat_time(time_index_ker) + matlabcode_time;
 
         time_index_ker = time_index_ker+1;
 
@@ -46,36 +50,38 @@ for run_number = 1:run_amount
 
 end
 
-my_time_ker = my_time_ker./run_amount;
-mat_time_ker = mat_time_ker./run_amount;
+naive_3d_conv_2_time = naive_3d_conv_2_time./run_amount;
+mat_time = mat_time./run_amount;
 
 % regular plot take
 
 k_s = 1:2:33;
 
 figure
-plot(k_s,my_time_ker);
+plot(k_s,naive_3d_conv_2_time);
 hold on;
-plot(k_s,mat_time_ker);
-title('My fxn vs. Matlab fxn in time - KERNAL');
-xlabel('kernal size');
+plot(k_s,mat_time);
+title('Run Time for Various Kernel Sizes: naive_3d_conv_2 vs. convn (MATLAB)', 'Interpreter', 'none');
+xlabel('kernel size');
 ylabel('time [s]');
-legend('my time','matlab time','Location','northwest');
-hold on;
+legend('naive\_3d\_conv\_2','convn (MATLAB)','Location','northwest');
+hold off;
 
 
 %double window plot
 figure
+hold on;
 subplot(2,1,1);
-plot(k_s,my_time_ker);
-title('my functions time - KERNAL');
-xlabel('kernal size');
+plot(k_s,naive_3d_conv_2_time);
+title('Run Time for Various Kernel Sizes: naive_3d_conv_2', 'Interpreter', 'none');
+xlabel('kernel size');
 ylabel('time [s]');
 
 subplot(2,1,2);
-plot(k_s,mat_time_ker.*1E3,'red');
-title('matlab functions time - KERNAL');
-xlabel('kernal size');
+plot(k_s,mat_time.*1E3,'red');
+title('Run Time for Various Kernel Sizes: convn (MATLAB)');
+xlabel('kernel size');
 ylabel('time [ms]');
+hold off;
 
 fprintf('\n');
