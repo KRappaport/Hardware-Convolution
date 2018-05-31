@@ -11,7 +11,7 @@ end
 
 %diff kernals
 
-in = rand(11,11,11);
+in = rand(33,33,11);
 
 naive_3d_conv_2_time = zeros(1,17);
 mat_time = zeros(1,17);
