@@ -57,7 +57,7 @@ figure
 plot(i_s./10,naive_3d_conv_2_time);
 hold on;
 plot(i_s./10,mat_time);
-title('Run Time for Various Image Sizes: naive_3d_conv_2 vs. convn (MATLAB)', 'Interpreter', 'none');
+title({'Run Time for Various Image Sizes:', ' aive_3d_conv_2 vs. convn (MATLAB)'}, 'Interpreter', 'none');
 xlabel('image size [\times10]');
 ylabel('time [s]');
 legend('naive\_3d\_conv\_2','convn (MATLAB)','Location','northwest');

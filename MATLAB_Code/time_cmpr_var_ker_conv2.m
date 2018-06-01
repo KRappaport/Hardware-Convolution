@@ -66,7 +66,7 @@ figure
 plot(k_s,conv_2d_naive_time.*1E3);
 hold on;
 plot(k_s,mat_time.*1E3);
-title('Run Time for Various Kernel Sizes: conv_2d_naive vs. convn (MATLAB)', 'Interpreter', 'none');
+title({'Run Time for Various Kernel Sizes:', 'conv_2d_naive vs. convn (MATLAB)'}, 'Interpreter', 'none');
 xlabel('kernel size');
 ylabel('time [ms]');
 legend('conv\_2d\_naive','convn (MATLAB)','Location','northwest');
@@ -89,4 +89,4 @@ xlabel('kernel size');
 ylabel('time [ms]');
 hold off;
 
- fprintf('\n');
+fprintf('\n');
