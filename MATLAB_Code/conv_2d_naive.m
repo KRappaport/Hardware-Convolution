@@ -14,7 +14,7 @@ function resultant = conv_2d_naive(input,kernel)
     ker_center_column = floor(ker_column_lgth/2) + 1;
 
     % Initialize resultant to size of input
-    resultant = zeros(in_row_lgth, in_column_lgth, in_depth);
+    resultant = zeros(in_row_lgth, in_column_lgth);
 
     % Actual convolution starts here:
     % First for loop sets the third dimension, location in the third dimension
@@ -64,8 +64,8 @@ function resultant = conv_2d_naive(input,kernel)
 
                     for in_column = start_column:last_column
 
-                        resultant(result_row, result_column, result_depth) ...
-                            = resultant(result_row, result_column, result_depth) ...
+                        resultant(result_row, result_column) ...
+                            = resultant(result_row, result_column) ...
                             + (input(in_row, in_column, result_depth) ...
                             *kernel(ker_row, (ker_base_column - in_column), result_depth));
 
