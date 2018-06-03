@@ -9,6 +9,7 @@ for k = 1:20
         ker = rand(k_s,k_s,11);
 
         result = conv_2d_naive(in,ker);
+        resultmc = conv_2d_naive_mult_core(in,ker);
 
         mat_result = zeros(11,11);
         for z = 1:11
@@ -16,7 +17,8 @@ for k = 1:20
         end
 
         A = ismembertol(result, mat_result, 1E-12);
-        if (isequal(A,B) == 0)
+        C = ismembertol(resultmc, mat_result, 1E-12);
+        if (isequal(A,B,C) == 0)
             disp('Results do not match up!')
             return
         end
