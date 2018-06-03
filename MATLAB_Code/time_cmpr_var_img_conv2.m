@@ -25,7 +25,7 @@ fprintf([statuss, updstat]);
 
 for run_number = 1:run_amount
     time_index_ker = 1;
-    for i_s = 10:20:1000
+    for i_s = 10:20:990
         in = rand(i_s,i_s,3);
 
         tic;
@@ -58,7 +58,7 @@ mat_time = mat_time./run_amount;
 
 % regular plot take
 
-i_s = 10:20:1000;
+i_s = 10:20:990;
 
 figure
 plot(i_s,conv_2d_naive_time.*1E3);

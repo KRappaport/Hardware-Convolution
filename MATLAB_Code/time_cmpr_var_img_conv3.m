@@ -23,7 +23,7 @@ fprintf([statuss, updstat]);
 
 for run_number = 1:run_amount
     time_index_in = 1;
-    for i_s = 10:20:1000
+    for i_s = 10:20:990
 
         in = rand(i_s,i_s,3);
         tic;
@@ -50,15 +50,15 @@ end
 naive_3d_conv_2_time = naive_3d_conv_2_time./run_amount;
 mat_time = mat_time./run_amount;
 
-i_s = 10:20:1000;
+i_s = 10:20:990;
 % regular plot take 1
 
 figure
-plot(i_s./10,naive_3d_conv_2_time);
+plot(i_s,naive_3d_conv_2_time);
 hold on;
-plot(i_s./10,mat_time);
+plot(i_s,mat_time);
 title({'Run Time for Various Image Sizes:', ' aive_3d_conv_2 vs. convn (MATLAB)'}, 'Interpreter', 'none');
-xlabel('image size [\times10]');
+xlabel('image size');
 ylabel('time [s]');
 legend('naive\_3d\_conv\_2','convn (MATLAB)','Location','northwest');
 hold off;
@@ -69,15 +69,15 @@ hold off;
 figure
 hold on;
 subplot(2,1,1);
-plot(i_s./10,naive_3d_conv_2_time);
+plot(i_s,naive_3d_conv_2_time);
 title('Run Time for Various Image Sizes: naive_3d_conv_2', 'Interpreter', 'none');
-xlabel('image size [\times10]');
+xlabel('image size');
 ylabel('time [s]');
 
 subplot(2,1,2);
-plot(i_s./10,mat_time.*1E3);
+plot(i_s,mat_time.*1E3);
 title('Run Time for Various Kernel Sizes: convn (MATLAB)');
-xlabel('image size [\times10]');
+xlabel('image size');
 ylabel('time [ms]');
 hold off;
 
