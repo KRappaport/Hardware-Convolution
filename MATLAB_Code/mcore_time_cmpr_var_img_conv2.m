@@ -64,7 +64,7 @@ conv_2d_mult_core_time = conv_2d_mult_core_time./run_amount;
 
 i_s = 10:20:990;
 
-figure
+mcore_var_img(1) = figure;
 plot(i_s,conv_2d_time.*1E3);
 hold on;
 plot(i_s,conv_2d_mult_core_time.*1E3);
@@ -76,7 +76,7 @@ hold off;
 
 
 %double window plot
-figure
+mcore_var_img(2) = figure;
 hold on;
 subplot(2,1,1);
 plot(i_s,conv_2d_time.*1E3);
