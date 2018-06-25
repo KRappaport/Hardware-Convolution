@@ -13,8 +13,8 @@ end
 
 ker = rand(3,3,3);
 
-naive_3d_conv_2_time = zeros(1,50);
-mat_time = zeros(1,50);
+naive_3d_conv_2_time = zeros(1,100);
+mat_time = zeros(1,100);
 
 statuss = 'Status:    ';
 updstat = ['0%%  [' repmat(' ', 1, run_amount) ']'];
@@ -23,7 +23,7 @@ fprintf([statuss, updstat]);
 
 for run_number = 1:run_amount
     time_index_in = 1;
-    for i_s = 10:20:990
+    for i_s = 10:20:1990
 
         in = rand(i_s,i_s,3);
         tic;
@@ -50,7 +50,7 @@ end
 naive_3d_conv_2_time = naive_3d_conv_2_time./run_amount;
 mat_time = mat_time./run_amount;
 
-i_s = 10:20:990;
+i_s = 10:20:1990;
 % regular plot take 1
 
 figure

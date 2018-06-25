@@ -1,4 +1,4 @@
-% This script is used to compare the run time of conv_2d_naive against that of
+% This script is used to compare the run time of conv_2d against that of
 % convn (MATLAB's function), for 2D convolution between an image with constant
 % size and a kernel with different sizes.
 
@@ -12,12 +12,12 @@ end
 
 %diff kernals
 
-in = rand(33,33,11);
+in = rand(99,99,11);
 
-mat_result = zeros(33,33);
+mat_result = zeros(99,99);
 
-conv_2d_naive_time = zeros(1,17);
-mat_time = zeros(1,17);
+conv_2d_time = zeros(1,50);
+mat_time = zeros(1,50);
 
 
 statuss = 'Status:    ';
@@ -27,13 +27,13 @@ fprintf([statuss, updstat]);
 
 for run_number = 1:run_amount
     time_index_ker = 1;
-    for k_s = 1:2:33
+    for k_s = 1:2:99
         ker = rand(k_s,k_s,11);
 
         tic;
         result = conv_2d_naive(in,ker);
         mycode_time = toc;
-        conv_2d_naive_time(time_index_ker) = conv_2d_naive_time(time_index_ker) + mycode_time;
+        conv_2d_time(time_index_ker) = conv_2d_time(time_index_ker) + mycode_time;
 
 
         tic;
@@ -55,21 +55,21 @@ for run_number = 1:run_amount
 
 end
 
-conv_2d_naive_time = conv_2d_naive_time./run_amount;
+conv_2d_time = conv_2d_time./run_amount;
 mat_time = mat_time./run_amount;
 
 % regular plot take
 
-k_s = 1:2:33;
+k_s = 1:2:99;
 
 figure
-plot(k_s,conv_2d_naive_time.*1E3);
+plot(k_s,conv_2d_time.*1E3);
 hold on;
 plot(k_s,mat_time.*1E3);
-title({'Run Time for Various Kernel Sizes:', 'conv_2d_naive vs. convn (MATLAB)'}, 'Interpreter', 'none');
+title({'Run Time for Various Kernel Sizes:', 'conv_2d vs. convn (MATLAB)'}, 'Interpreter', 'none');
 xlabel('kernel size');
 ylabel('time [ms]');
-legend('conv\_2d\_naive','convn (MATLAB)','Location','northwest');
+legend('conv\_2d','convn (MATLAB)','Location','northwest');
 hold off;
 
 
@@ -77,8 +77,8 @@ hold off;
 figure
 hold on;
 subplot(2,1,1);
-plot(k_s,conv_2d_naive_time.*1E3);
-title('Run Time for Various Kernel Sizes: conv_2d_naive', 'Interpreter', 'none');
+plot(k_s,conv_2d_time.*1E3);
+title('Run Time for Various Kernel Sizes: conv_2d', 'Interpreter', 'none');
 xlabel('kernel size');
 ylabel('time [ms]');
 

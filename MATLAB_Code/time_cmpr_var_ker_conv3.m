@@ -11,10 +11,10 @@ end
 
 %diff kernals
 
-in = rand(33,33,11);
+in = rand(99,99,11);
 
-naive_3d_conv_2_time = zeros(1,17);
-mat_time = zeros(1,17);
+naive_3d_conv_2_time = zeros(1,50);
+mat_time = zeros(1,50);
 
 statuss = 'Status:    ';
 updstat = ['0%%  [' repmat(' ', 1, run_amount) ']'];
@@ -23,7 +23,7 @@ fprintf([statuss, updstat]);
 
 for run_number = 1:run_amount
     time_index_ker = 1;
-    for k_s = 1:2:33
+    for k_s = 1:2:99
         ker = rand(k_s,k_s,11);
 
         tic;
@@ -55,7 +55,7 @@ mat_time = mat_time./run_amount;
 
 % regular plot take
 
-k_s = 1:2:33;
+k_s = 1:2:99;
 
 figure
 plot(k_s,naive_3d_conv_2_time);
