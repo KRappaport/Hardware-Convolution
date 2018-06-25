@@ -87,7 +87,7 @@ ylabel('time [ms]');
 
 subplot(2,1,2);
 plot(k_s,conv_2d_mult_core_time.*1E3,'red');
-title('Run Time for Various Kernel Sizes: conv_2d_mult_core' 'Interpreter', 'none');
+title('Run Time for Various Kernel Sizes: conv_2d_mult_core', 'Interpreter', 'none');
 xlabel('kernel size');
 ylabel('time [ms]');
 hold off;
