@@ -1,4 +1,4 @@
-function resultant = conv_2d_naive_mult_core(input,kernel,ncores)
+function resultant = conv_2d_mult_core(input,kernel,ncores)
 
     if nargin == 2
         ncores = 2;
@@ -26,13 +26,10 @@ function resultant = conv_2d_naive_mult_core(input,kernel,ncores)
     resultant = zeros(in_row_lgth, in_column_lgth);
 
     % Actual convolution starts here:
-    % First for loop sets the third dimension, location in the third dimension
-    % refers to a 2D matrix that will be convolved (the convolution is 2D the
-    % third dimension can be seen as just a list of 2D matrices and the convolution
-    % only takes place between the first two dimensions of input and kernel for
-    % equal third dimension indices).
-    % Second 2 for loops determine the element of the result to find
-    % and the final 2 match up the proper input and kernel elements.
+    % First 2 for loops determine the element of the result to find
+    % and the second 2 match up the proper input and kernel elements.
+    % The final inner most for loop applies the 2D convolution to each of the
+    % matrices along the third dimension and sums the results.
     % In total 5 nested for loops.
 
     % parfor (result_depth = 1:in_depth, ncores)
@@ -79,15 +76,9 @@ function resultant = conv_2d_naive_mult_core(input,kernel,ncores)
                                 *kernel(ker_row, (ker_base_column - in_column), result_depth));
 
                         end
-                        % resultant(result_row, result_column) ...
-                        %     = resultant(result_row, result_column) ...
-                        %     + (input(in_row, in_column, result_depth) ...
-                        %     *kernel(ker_row, (ker_base_column - in_column), result_depth));
-
                     end
                 end
             end
         end
-    % end
 
 end

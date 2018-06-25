@@ -1,4 +1,4 @@
-function resultant = conv_2d_naive(input,kernel)
+function resultant = conv_2d(input,kernel)
 
     % Get dimensions of input and kernel
     [in_row_lgth, in_column_lgth, in_depth] = size(input);
