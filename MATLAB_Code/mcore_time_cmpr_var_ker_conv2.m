@@ -21,8 +21,8 @@ else
 end
 
 
-conv_2d= zeros(1,17);
-conv_2dcore_time = zeros(1,17);
+conv_2d_time= zeros(1,17);
+conv_2d_mult_core_time = zeros(1,17);
 
 
 statuss = 'Status:    ';
