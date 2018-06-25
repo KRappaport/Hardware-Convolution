@@ -21,8 +21,8 @@ else
 end
 
 
-conv_2d_time = zeros(1,250);
-conv_2d_mult_core_time = zeros(1,250);
+conv_2d_time = zeros(1,100);
+conv_2d_mult_core_time = zeros(1,100);
 
 
 statuss = 'Status:    ';
@@ -32,7 +32,7 @@ fprintf([statuss, updstat]);
 
 for run_number = 1:run_amount
     time_index_ker = 1;
-    for i_s = 10:20:4990
+    for i_s = 10:20:1990
         in = rand(i_s,i_s,3);
 
         tic;
@@ -62,7 +62,7 @@ conv_2d_mult_core_time = conv_2d_mult_core_time./run_amount;
 
 % regular plot take
 
-i_s = 10:20:4990;
+i_s = 10:20:1990;
 
 mcore_var_img(1) = figure;
 plot(i_s,conv_2d_time.*1E3);

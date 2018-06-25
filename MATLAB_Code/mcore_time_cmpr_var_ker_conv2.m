@@ -12,7 +12,7 @@ end
 
 %diff kernals
 
-in = rand(499,499,11);
+in = rand(199,199,11);
 
 if ((exist('ncores')==0) || (isnumeric(ncores)==0) || (ncores <= 0))
     ncores = 2;
@@ -21,8 +21,8 @@ else
 end
 
 
-conv_2d_time= zeros(1,250);
-conv_2d_mult_core_time = zeros(1,250);
+conv_2d_time= zeros(1,100);
+conv_2d_mult_core_time = zeros(1,100);
 
 
 statuss = 'Status:    ';
@@ -32,7 +32,7 @@ fprintf([statuss, updstat]);
 
 for run_number = 1:run_amount
     time_index_ker = 1;
-    for k_s = 1:2:499
+    for k_s = 1:2:199
         ker = rand(k_s,k_s,11);
 
         tic;
@@ -63,7 +63,7 @@ conv_2d_mult_core_time = conv_2d_mult_core_time./run_amount;
 
 % regular plot take
 
-k_s = 1:2:499;
+k_s = 1:2:199;
 
 mcore_var_ker(1) = figure;
 plot(k_s,conv_2d_time.*1E3);
