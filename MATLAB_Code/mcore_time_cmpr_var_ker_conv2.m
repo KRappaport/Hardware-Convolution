@@ -23,6 +23,7 @@ end
 
 conv_2d_time= zeros(1,75);
 conv_2d_mult_core_time = zeros(1,75);
+bytes = zeros(ncores,2,75);
 
 
 statuss = 'Status:    ';
@@ -40,10 +41,11 @@ for run_number = 1:run_amount
         reg_time = toc;
         conv_2d_time(time_index_ker) = conv_2d_time(time_index_ker) + reg_time;
 
-
+        ticBytes(gcp);
         tic;
         mcore_result = conv_2d_mult_core(in,ker,ncores);
         mcore_time = toc;
+        bytes(:,:,time_index_ker) = bytes(:,:,time_index_ker) + tocBytes(gcp);
         conv_2d_mult_core_time(time_index_ker) = conv_2d_mult_core_time(time_index_ker) + mcore_time;
 
         time_index_ker = time_index_ker+1;
@@ -60,6 +62,7 @@ end
 
 conv_2d_time = conv_2d_time./run_amount;
 conv_2d_mult_core_time = conv_2d_mult_core_time./run_amount;
+bytes = sum(bytes,1)./run_amount;
 
 % regular plot take
 
@@ -90,6 +93,20 @@ plot(k_s,conv_2d_mult_core_time.*1E3,'red');
 title('Run Time for Various Kernel Sizes: conv_2d_mult_core', 'Interpreter', 'none');
 xlabel('kernel size');
 ylabel('time [ms]');
+hold off;
+
+mcore_var_ker_bytes = figure;
+hold on;
+subplot(2,1,1);
+plot(k_s, squeeze(bytes(1,1,:)));
+title('Bytes Transferred');
+xlabel('kernel size');
+ylabel('Bytes');
+subplot(2,1,2);
+plot(k_s, squeeze(bytes(1,2,:)));
+title('Bytes Received')
+xlabel('kernel size');
+ylabel('Bytes');
 hold off;
 
 fprintf('\n');
