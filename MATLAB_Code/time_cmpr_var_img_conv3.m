@@ -53,7 +53,7 @@ mat_time = mat_time./run_amount;
 i_s = 10:20:1990;
 % regular plot take 1
 
-figure
+var_img_3d(1) = figure;
 plot(i_s,naive_3d_conv_2_time);
 hold on;
 plot(i_s,mat_time);
@@ -66,7 +66,7 @@ hold off;
 
 
 %double window plot take 1
-figure
+var_img_3d(2) = figure;
 hold on;
 subplot(2,1,1);
 plot(i_s,naive_3d_conv_2_time);

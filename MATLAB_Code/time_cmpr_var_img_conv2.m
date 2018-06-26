@@ -60,7 +60,7 @@ mat_time = mat_time./run_amount;
 
 i_s = 10:20:1990;
 
-figure
+var_img_2d(1) = figure;
 plot(i_s,conv_2d_time.*1E3);
 hold on;
 plot(i_s,mat_time.*1E3);
@@ -72,7 +72,7 @@ hold off;
 
 
 %double window plot
-figure
+var_img_2d(2) = figure;
 hold on;
 subplot(2,1,1);
 plot(i_s,conv_2d_time.*1E3);

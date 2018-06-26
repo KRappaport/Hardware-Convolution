@@ -57,7 +57,7 @@ mat_time = mat_time./run_amount;
 
 k_s = 1:2:99;
 
-figure
+var_ker_3d(1) = figure;
 plot(k_s,naive_3d_conv_2_time);
 hold on;
 plot(k_s,mat_time);
@@ -69,7 +69,7 @@ hold off;
 
 
 %double window plot
-figure
+var_ker_3d(2) = figure;
 hold on;
 subplot(2,1,1);
 plot(k_s,naive_3d_conv_2_time);
