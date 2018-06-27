@@ -12,12 +12,12 @@ end
 
 %diff kernals
 
-in = rand(99,99,11);
+in = rand(149,149,5);
 
-mat_result = zeros(99,99);
+mat_result = zeros(149,149);
 
-conv_2d_time = zeros(1,50);
-mat_time = zeros(1,50);
+conv_2d_time = zeros(1,75);
+mat_time = zeros(1,75);
 
 
 statuss = 'Status:    ';
@@ -27,8 +27,8 @@ fprintf([statuss, updstat]);
 
 for run_number = 1:run_amount
     time_index_ker = 1;
-    for k_s = 1:2:99
-        ker = rand(k_s,k_s,11);
+    for k_s = 1:2:149
+        ker = rand(k_s,k_s,5);
 
         tic;
         result = conv_2d_naive(in,ker);
@@ -37,7 +37,7 @@ for run_number = 1:run_amount
 
 
         tic;
-        for z = 1:11
+        for z = 1:5
             mat_result = mat_result + convn(in(:,:,z),ker(:,:,z),'same');
         end
         matlabcode_time = toc;
@@ -60,7 +60,7 @@ mat_time = mat_time./run_amount;
 
 % regular plot take
 
-k_s = 1:2:99;
+k_s = 1:2:149;
 
 var_ker_2d(1) = figure;
 plot(k_s,conv_2d_time.*1E3);

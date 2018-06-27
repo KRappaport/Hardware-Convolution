@@ -12,10 +12,10 @@ end
 
 %diff image
 
-ker = rand(3,3,3);
+ker = rand(3,3,5);
 
-conv_2d_time = zeros(1,100);
-mat_time = zeros(1,100);
+conv_2d_time = zeros(1,75);
+mat_time = zeros(1,75);
 
 
 statuss = 'Status:    ';
@@ -25,8 +25,8 @@ fprintf([statuss, updstat]);
 
 for run_number = 1:run_amount
     time_index_ker = 1;
-    for i_s = 10:20:1990
-        in = rand(i_s,i_s,3);
+    for i_s = 10:20:1490
+        in = rand(i_s,i_s,5);
 
         tic;
         result = conv_2d_naive(in,ker);
@@ -58,7 +58,7 @@ mat_time = mat_time./run_amount;
 
 % regular plot take
 
-i_s = 10:20:1990;
+i_s = 10:20:1490;
 
 var_img_2d(1) = figure;
 plot(i_s,conv_2d_time.*1E3);
