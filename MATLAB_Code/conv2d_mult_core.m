@@ -1,4 +1,4 @@
-function final_result = conv2d(input,kernel)
+function final_result = conv2d_mult_core(input,kernel)
 
     [input_x,input_y,input_z] = size(input);
     [kernel_x,kernel_y,kernel_z] = size(kernel);   
@@ -134,7 +134,7 @@ function final_result = conv2d(input,kernel)
     summation1D =0;
     summation2D =0;
     
-    for z_slice = 1:input_z
+    parfor z_slice = 1:input_z
 
         for result_x = 1:input_x
 
