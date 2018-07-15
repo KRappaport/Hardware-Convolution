@@ -1,4 +1,4 @@
-run_amount = 11;
+run_amount = 1;
 kernal_max_z = 11;
 image_x = 6;
 image_y = 6;
@@ -30,7 +30,7 @@ for run_number = 1:run_amount
             mat_result(:,:,i) = conv2(in(:,:,i),ker(:,:,i),'same');
         end
             
-        mat_result_final = sum(mat_result,3)./3;
+        mat_result_final = sum(mat_result,3);%./3;
            
         matlabcode_time = toc;
         
