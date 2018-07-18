@@ -158,7 +158,7 @@ function final_result = conv2d(input,kernel)
     end
 
 final_result = sum(result,3);
-%the final result of an index is the average of the convolutions along the
+%the final result is the sum of elementss along the 'z' axis
 %z dimension of that x,y index
 end
     
