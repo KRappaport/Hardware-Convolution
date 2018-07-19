@@ -157,8 +157,8 @@ function final_result = conv2d_mult_core(input,kernel)
         end
     end
 
-final_result = sum(result,3)./input_z;
-%the final result of an index is the average of the convolutions along the
+final_result = sum(result,3);%./input_z;
+%the final result is a summation along the "z" axis
 %z dimension of that x,y index
 end
     
