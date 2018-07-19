@@ -30,7 +30,7 @@ for run_number = 1:run_amount
         in = rand(i_s,i_s,5);
 
         tic;
-        result = conv_2d_naive(in,ker);
+        result = conv_2d(in,ker);
         mycode_time = toc;
         conv_2d_time(time_index_ker) = conv_2d_time(time_index_ker) + mycode_time;
 
