@@ -28,9 +28,9 @@ for k = 1:20
         if (isequal(A,B,C,D,true_array) == 0)
             disp('Results do not match up!')
             return
-        else
-            disp('Results match up');
         end
 
     end
 end
+
+disp('Results match up');
