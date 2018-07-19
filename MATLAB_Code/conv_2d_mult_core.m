@@ -32,7 +32,6 @@ function resultant = conv_2d_mult_core(input,kernel,ncores)
     % matrices along the third dimension and sums the results.
     % In total 5 nested for loops.
 
-    % parfor (result_depth = 1:in_depth, ncores)
         parfor (result_row = 1:in_row_lgth, ncores)
             ker_base_row = ker_center_row + result_row;
 
