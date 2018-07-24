@@ -59,7 +59,7 @@ for run_number = 1:run_amount
 
         ticBytes(gcp);
         tic;
-        mcore_result = conv2d_mult_core(in,ker,ncores);
+        mcore_result = conv2d_mult_core(in,ker);
         mcore_time = toc;
         bytes2(:,:,time_index_ker) = bytes2(:,:,time_index_ker) + tocBytes(gcp);
         conv2d_mult_core_time(time_index_ker) = conv2d_mult_core_time(time_index_ker) + mcore_time;
