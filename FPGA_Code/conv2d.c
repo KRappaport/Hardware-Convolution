@@ -7,11 +7,17 @@ void conv2d(float *img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short 
 #pragma HLS INTERFACE s_axilite port=return bundle=DIM
 #pragma HLS INTERFACE s_axilite port=wdth bundle=DIM
 #pragma HLS INTERFACE s_axilite port=hght bundle=DIM
+#pragma HLS ARRAY_PARTITION variable=ker complete
 #pragma HLS INTERFACE s_axilite port=ker bundle=KER
 
     float delay_line[KERNEL_DIM-1][MAX_IMG_WIDTH-2];
     float kernel[DEPTH][KERNEL_DIM*KERNEL_DIM], hold[KERNEL_DIM][KERNEL_DIM-1];
     float insert_delay[KERNEL_DIM-1], result;
+
+#pragma HLS ARRAY_PARTITION variable=delay_line complete
+#pragma HLS ARRAY_PARTITION variable=hold complete
+#pragma HLS ARRAY_PARTITION variable=kernel complete
+#pragma HLS ARRAY_PARTITION variable=insert_delay complete
 
     unsigned int height = hght;
     unsigned short width = wdth;
@@ -37,6 +43,7 @@ void conv2d(float *img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short 
             }
 
             float mult_result[KERNEL_DIM*KERNEL_DIM];
+#pragma HLS ARRAY_PARTITION variable=mult_result complete
             unsigned short mult_indx;
             for (mult_indx = 0; mult_indx < (KERNEL_DIM*KERNEL_DIM); mult_indx++) {
                 mult_result[mult_indx] = 0;
