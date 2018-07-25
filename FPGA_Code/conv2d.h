@@ -27,4 +27,6 @@
 
 void conv2d(float *img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short wdth, unsigned int hght, float *img_out);
 
+void init_delay_line(float delay_line[KERNEL_DIM-1][MAX_IMG_WIDTH-2]);
+
 #endif
