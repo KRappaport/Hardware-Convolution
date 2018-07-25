@@ -2,6 +2,12 @@
 
 
 void conv2d(float *img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short wdth, unsigned int hght, float *img_out){
+#pragma HLS INTERFACE axis port=img depth=25 bundle=IMG
+#pragma HLS INTERFACE axis port=img_out depth=25 bundle=IMG_OUT
+#pragma HLS INTERFACE s_axilite port=return bundle=DIM
+#pragma HLS INTERFACE s_axilite port=wdth bundle=DIM
+#pragma HLS INTERFACE s_axilite port=hght bundle=DIM
+#pragma HLS INTERFACE s_axilite port=ker bundle=KER
 
     float delay_line[KERNEL_DIM-1][MAX_IMG_WIDTH-2];
     float kernel[DEPTH][KERNEL_DIM*KERNEL_DIM], hold[KERNEL_DIM][KERNEL_DIM-1];
@@ -42,38 +48,33 @@ void conv2d(float *img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short 
                 }
             }
 
-            hold_indx1 = KERNEL_DIM_1;
-            hold_indx2 = KERNEL_DIM_2;
-
             if (col != 0) {
-                result = hold[hold_indx1][hold_indx2] + mult_result[HIGH_KER_SQR_INDX];
+                result = hold[KERNEL_DIM_1][KERNEL_DIM_2] + mult_result[HIGH_KER_SQR_INDX];
             } else {
-                result = hold[hold_indx1][hold_indx2];
+                result = hold[KERNEL_DIM_1][KERNEL_DIM_2];
             }
             done = validate_result(initial_grbg, result, img_out);
             mult_indx = HIGH_KER_SQR_INDX-1;
-            for (hold_indx2; hold_indx2 > 0; hold_indx2--) {
-                hold[hold_indx1][hold_indx2] = hold[hold_indx1][hold_indx2-1] + mult_result[mult_indx];
+            for (hold_indx2 = KERNEL_DIM_2; hold_indx2 > 0; hold_indx2--) {
+                hold[KERNEL_DIM_1][hold_indx2] = hold[KERNEL_DIM_1][hold_indx2-1] + mult_result[mult_indx];
                 mult_indx--;
             }
             if (col == last_col) {
-                hold[hold_indx1][0] = delay_line[hold_indx1-1][delay_end];
+                hold[KERNEL_DIM_1][0] = delay_line[KERNEL_DIM_1-1][delay_end];
             } else {
-                hold[hold_indx1][0] = delay_line[hold_indx1-1][delay_end] + mult_result[mult_indx];
+                hold[KERNEL_DIM_1][0] = delay_line[KERNEL_DIM_1-1][delay_end] + mult_result[mult_indx];
             }
 
-            hold_indx1--;
-            for (hold_indx1; hold_indx1 > 0; hold_indx1--) {
+            for (hold_indx1 = KERNEL_DIM_2; hold_indx1 > 0; hold_indx1--) {
                 mult_indx--;
-                hold_indx2 = KERNEL_DIM_2;
                 if (col != 0) {
-                    insert_delay[hold_indx1] = hold[hold_indx1][hold_indx2] + mult_result[mult_indx];
+                    insert_delay[hold_indx1] = hold[hold_indx1][KERNEL_DIM_2] + mult_result[mult_indx];
                 } else {
-                    insert_delay[hold_indx1] = hold[hold_indx1][hold_indx2];
+                    insert_delay[hold_indx1] = hold[hold_indx1][KERNEL_DIM_2];
                 }
                 advance_delay_line(delay_line, insert_delay[hold_indx1], hold_indx1);
                 mult_indx--;
-                for (hold_indx2; hold_indx2 > 0; hold_indx2--) {
+                for (hold_indx2 = KERNEL_DIM_2; hold_indx2 > 0; hold_indx2--) {
                     hold[hold_indx1][hold_indx2] = hold[hold_indx1][hold_indx2-1] + mult_result[mult_indx];
                     mult_indx--;
                 }
@@ -85,15 +86,14 @@ void conv2d(float *img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short 
             }
 
             mult_indx--;
-            hold_indx2 = KERNEL_DIM_2;
             if (col != 0) {
-                insert_delay[0] = hold[0][hold_indx2] + mult_result[mult_indx];
+                insert_delay[0] = hold[0][KERNEL_DIM_2] + mult_result[mult_indx];
             } else {
-                insert_delay[0] = hold[0][hold_indx2];
+                insert_delay[0] = hold[0][KERNEL_DIM_2];
             }
             advance_delay_line(delay_line, insert_delay[0], 0);
             mult_indx--;
-            for (hold_indx2; hold_indx2 > 0; hold_indx2--) {
+            for (hold_indx2 = KERNEL_DIM_2; hold_indx2 > 0; hold_indx2--) {
                 hold[0][hold_indx2] = hold[0][hold_indx2-1] + mult_result[mult_indx];
                 mult_indx--;
             }
