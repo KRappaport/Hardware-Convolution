@@ -5,6 +5,7 @@ void advance_delay_line(float delay_line[KERNEL_DIM-1][MAX_IMG_WIDTH-2], float a
     unsigned short i;
 
     for (i = MAX_IMG_WIDTH-3; i > 0; i--) {
+#pragma HLS UNROLL
         delay_line[line_number][i] = delay_line[line_number][i-1];
     }
     delay_line[line_number][i] = add_delay;
