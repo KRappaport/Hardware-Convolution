@@ -1,7 +1,7 @@
 #include "conv2d.h"
 
 
-void init_hold(hold[KERNEL_DIM][KERNEL_DIM-1]) {
+void init_hold(float hold[KERNEL_DIM][KERNEL_DIM-1]) {
     unsigned short i,k;
 
     for (i = 0; i < KERNEL_DIM; i++) {

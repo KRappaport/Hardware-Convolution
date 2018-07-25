@@ -37,4 +37,8 @@ void init_hold(float hold[KERNEL_DIM][KERNEL_DIM-1]);
 
 void init_kernel(float ker[DEPTH][KERNEL_DIM_SQR], float kernel[DEPTH][KERNEL_DIM_SQR]);
 
+unsigned int validate_result(unsigned short top_grbg_size, float result, float *img_out);
+
+void advance_delay_line(float delay_line[KERNEL_DIM-1][MAX_IMG_WIDTH-2], float add_delay, unsigned short line_number);
+
 #endif

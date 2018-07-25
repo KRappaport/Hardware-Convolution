@@ -18,6 +18,8 @@ void conv2d(float *img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short 
     unsigned int row, done;
     unsigned short last_col = width-1;
     unsigned short initial_grbg = (width*(KERNEL_DIM>>1)) + (KERNEL_DIM>>1);
+    unsigned short hold_indx1;
+    unsigned short hold_indx2;
 
     for (row = 0; row < height; row++) {
         unsigned short col;
@@ -40,8 +42,8 @@ void conv2d(float *img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short 
                 }
             }
 
-            unsigned short hold_indx1 = KERNEL_DIM_1;
-            unsigned short hold_indx2 = KERNEL_DIM_2;
+            hold_indx1 = KERNEL_DIM_1;
+            hold_indx2 = KERNEL_DIM_2;
 
             if (col != 0) {
                 result = hold[hold_indx1][hold_indx2] + mult_result[HIGH_KER_SQR_INDX];
@@ -60,6 +62,7 @@ void conv2d(float *img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short 
                 hold[hold_indx1][0] = delay_line[hold_indx1-1][delay_end] + mult_result[mult_indx];
             }
 
+            hold_indx1--;
             for (hold_indx1; hold_indx1 > 0; hold_indx1--) {
                 mult_indx--;
                 hold_indx2 = KERNEL_DIM_2;
