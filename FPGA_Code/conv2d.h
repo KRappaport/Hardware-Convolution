@@ -33,6 +33,8 @@ void conv2d(float *img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short 
 
 void init_delay_line(float delay_line[KERNEL_DIM-1][MAX_IMG_WIDTH-2]);
 
+void init_hold(float hold[KERNEL_DIM][KERNEL_DIM-1]);
+
 void init_kernel(float ker[DEPTH][KERNEL_DIM_SQR], float kernel[DEPTH][KERNEL_DIM_SQR]);
 
 #endif
