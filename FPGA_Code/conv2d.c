@@ -7,16 +7,17 @@ void conv2d(float *img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short 
 #pragma HLS INTERFACE s_axilite port=return bundle=DIM
 #pragma HLS INTERFACE s_axilite port=wdth bundle=DIM
 #pragma HLS INTERFACE s_axilite port=hght bundle=DIM
-#pragma HLS INTERFACE bram port=ker bundle=KER
+// #pragma HLS INTERFACE m_axi port=ker offset=slave bundle=KER depth=45 max_read_burst_length=256
+#pragma HLS INTERFACE s_axilite port=ker bundle=KER
 
     float delay_line[KERNEL_DIM-1][MAX_IMG_WIDTH-2];
     float kernel[DEPTH][KERNEL_DIM*KERNEL_DIM], hold[KERNEL_DIM][KERNEL_DIM-1];
     float insert_delay[KERNEL_DIM-1], result;
 
-#pragma HLS ARRAY_PARTITION variable=delay_line complete
-#pragma HLS ARRAY_PARTITION variable=hold complete
-#pragma HLS ARRAY_PARTITION variable=kernel complete
-#pragma HLS ARRAY_PARTITION variable=insert_delay complete
+#pragma HLS ARRAY_PARTITION variable=delay_line complete dim=0
+#pragma HLS ARRAY_PARTITION variable=hold complete dim=0
+#pragma HLS ARRAY_PARTITION variable=kernel complete dim=0
+#pragma HLS ARRAY_PARTITION variable=insert_delay complete dim=0
 
     unsigned int height = hght;
     unsigned short width = wdth;
@@ -36,30 +37,33 @@ void conv2d(float *img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short 
         unsigned short col;
         for (col = 0; col < width; col++) {
             float current_pxl[DEPTH];
-#pragma HLS ARRAY_PARTITION variable=current_pxl complete
+#pragma HLS ARRAY_PARTITION variable=current_pxl complete dim=0
             unsigned short depth;
-            for (depth = 0; depth < DEPTH; depth++) {
-                current_pxl[depth] = *(img++);
-            }
 
-            float mult_result[KERNEL_DIM*KERNEL_DIM];
-#pragma HLS ARRAY_PARTITION variable=mult_result complete
+            float mult_result[DEPTH][KERNEL_DIM*KERNEL_DIM];
+#pragma HLS ARRAY_PARTITION variable=mult_result complete dim=0
             unsigned short mult_indx;
-            for (mult_indx = 0; mult_indx < (KERNEL_DIM*KERNEL_DIM); mult_indx++) {
+
+
+            for (depth = 0; depth < DEPTH; depth++) {
 #pragma HLS UNROLL
-                mult_result[mult_indx] = 0;
+                current_pxl[depth] = *(img++);
+                for (mult_indx = 0; mult_indx < (KERNEL_DIM*KERNEL_DIM); mult_indx++) {
+#pragma HLS UNROLL
+                    mult_result[depth][mult_indx] = current_pxl[depth]*kernel[depth][mult_indx];
+                }
             }
 
             for (mult_indx = 0; mult_indx < (KERNEL_DIM*KERNEL_DIM); mult_indx++) {
 #pragma HLS UNROLL
-                for (depth = 0; depth < DEPTH; depth++) {
+                for (depth = 1; depth < DEPTH; depth++) {
 #pragma HLS UNROLL
-                    mult_result[mult_indx] += current_pxl[depth]*kernel[depth][mult_indx];
+                    mult_result[0][mult_indx] = mult_result[0][mult_indx] + mult_result[depth][mult_indx];
                 }
             }
 
             if (col != 0) {
-                result = hold[KERNEL_DIM_1][KERNEL_DIM_2] + mult_result[HIGH_KER_SQR_INDX];
+                result = hold[KERNEL_DIM_1][KERNEL_DIM_2] + mult_result[0][HIGH_KER_SQR_INDX];
             } else {
                 result = hold[KERNEL_DIM_1][KERNEL_DIM_2];
             }
@@ -67,38 +71,40 @@ void conv2d(float *img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short 
             mult_indx = HIGH_KER_SQR_INDX-1;
             for (hold_indx2 = KERNEL_DIM_2; hold_indx2 > 0; hold_indx2--) {
 #pragma HLS UNROLL
-                hold[KERNEL_DIM_1][hold_indx2] = hold[KERNEL_DIM_1][hold_indx2-1] + mult_result[mult_indx];
+                hold[KERNEL_DIM_1][hold_indx2] = hold[KERNEL_DIM_1][hold_indx2-1] + mult_result[0][mult_indx];
                 mult_indx--;
             }
             if (col == last_col) {
                 hold[KERNEL_DIM_1][0] = delay_line[KERNEL_DIM_1-1][delay_end];
             } else {
-                hold[KERNEL_DIM_1][0] = delay_line[KERNEL_DIM_1-1][delay_end] + mult_result[mult_indx];
+                hold[KERNEL_DIM_1][0] = delay_line[KERNEL_DIM_1-1][delay_end] + mult_result[0][mult_indx];
             }
 
             for (hold_indx1 = KERNEL_DIM_2; hold_indx1 > 0; hold_indx1--) {
+#pragma HLS UNROLL
                 mult_indx--;
                 if (col != 0) {
-                    insert_delay[hold_indx1] = hold[hold_indx1][KERNEL_DIM_2] + mult_result[mult_indx];
+                    insert_delay[hold_indx1] = hold[hold_indx1][KERNEL_DIM_2] + mult_result[0][mult_indx];
                 } else {
                     insert_delay[hold_indx1] = hold[hold_indx1][KERNEL_DIM_2];
                 }
                 advance_delay_line(delay_line, insert_delay[hold_indx1], hold_indx1);
                 mult_indx--;
                 for (hold_indx2 = KERNEL_DIM_2; hold_indx2 > 0; hold_indx2--) {
-                    hold[hold_indx1][hold_indx2] = hold[hold_indx1][hold_indx2-1] + mult_result[mult_indx];
+#pragma HLS UNROLL
+                    hold[hold_indx1][hold_indx2] = hold[hold_indx1][hold_indx2-1] + mult_result[0][mult_indx];
                     mult_indx--;
                 }
                 if (col == last_col) {
                     hold[hold_indx1][0] = delay_line[hold_indx1-1][delay_end];
                 } else {
-                    hold[hold_indx1][0] = delay_line[hold_indx1-1][delay_end] + mult_result[mult_indx];
+                    hold[hold_indx1][0] = delay_line[hold_indx1-1][delay_end] + mult_result[0][mult_indx];
                 }
             }
 
             mult_indx--;
             if (col != 0) {
-                insert_delay[0] = hold[0][KERNEL_DIM_2] + mult_result[mult_indx];
+                insert_delay[0] = hold[0][KERNEL_DIM_2] + mult_result[0][mult_indx];
             } else {
                 insert_delay[0] = hold[0][KERNEL_DIM_2];
             }
@@ -106,13 +112,13 @@ void conv2d(float *img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short 
             mult_indx--;
             for (hold_indx2 = KERNEL_DIM_2; hold_indx2 > 0; hold_indx2--) {
 #pragma HLS UNROLL
-                hold[0][hold_indx2] = hold[0][hold_indx2-1] + mult_result[mult_indx];
+                hold[0][hold_indx2] = hold[0][hold_indx2-1] + mult_result[0][mult_indx];
                 mult_indx--;
             }
             if (col == last_col) {
                 hold[0][0] = 0;
             } else {
-                hold[0][0] = mult_result[mult_indx];
+                hold[0][0] = mult_result[0][mult_indx];
             }
         }
     }
