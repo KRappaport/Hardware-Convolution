@@ -94,7 +94,7 @@ void conv2d(float *img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short 
 #pragma HLS UNROLL
                 mult_indx--;
                 insert_delay[hold_indx1] = hold[hold_indx1][KERNEL_DIM_2] + mult_result[0][mult_indx];
-                advance_delay_line(delay_line[hold_indx1], insert_delay[hold_indx1], hold_indx1, delay_end);
+                advance_delay_line(delay_line[hold_indx1], insert_delay[hold_indx1], delay_end);
                 mult_indx--;
                 for (hold_indx2 = KERNEL_DIM_2; hold_indx2 > 0; hold_indx2--) {
 #pragma HLS UNROLL
@@ -106,7 +106,7 @@ void conv2d(float *img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short 
 
             mult_indx--;
             insert_delay[0] = hold[0][KERNEL_DIM_2] + mult_result[0][mult_indx];
-            advance_delay_line(delay_line[0], insert_delay[0], 0, delay_end);
+            advance_delay_line(delay_line[0], insert_delay[0], delay_end);
             mult_indx--;
             for (hold_indx2 = KERNEL_DIM_2; hold_indx2 > 0; hold_indx2--) {
 #pragma HLS UNROLL
@@ -131,7 +131,7 @@ void conv2d(float *img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short 
             }
             hold[hold_indx1][0] = delay_line[flush_amnt][0];
             hold_indx1--;
-            advance_delay_line(delay_line[flush_amnt], hold[hold_indx1][KERNEL_DIM_2], flush_amnt, delay_end);
+            advance_delay_line(delay_line[flush_amnt], hold[hold_indx1][KERNEL_DIM_2], delay_end);
         }
         for (hold_indx2 = KERNEL_DIM_2; hold_indx2 > 0; hold_indx2--) {
 #pragma HLS UNROLL

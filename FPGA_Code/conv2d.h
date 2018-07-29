@@ -1,20 +1,24 @@
 #ifndef _CONV2D
 #define _CONV2D
 
-#ifndef MAX_IMG_WIDTH
-#define MAX_IMG_WIDTH 5
-#endif
-
 #ifndef KERNEL_DIM
 #define KERNEL_DIM 3
 #endif
 
-#ifndef KERNEL_DIM_SQR
-#define KERNEL_DIM_SQR KERNEL_DIM*KERNEL_DIM
-#endif
-
 #ifndef DEPTH
 #define DEPTH 1
+#endif
+
+#ifndef MAX_IMG_WIDTH
+#define MAX_IMG_WIDTH 1024
+#endif
+
+#ifndef EDGE_AMOUNT
+#define EDGE_AMOUNT KERNEL_DIM>>1
+#endif
+
+#ifndef KERNEL_DIM_SQR
+#define KERNEL_DIM_SQR KERNEL_DIM*KERNEL_DIM
 #endif
 
 #ifndef HIGH_KER_SQR_INDX
@@ -31,7 +35,7 @@
 
 void conv2d(float *img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short wdth, unsigned int hght, float *img_out);
 
-void init_delay_line(float delay_line[KERNEL_DIM-1][MAX_IMG_WIDTH-2]);
+void init_delay_line(float delay_line[KERNEL_DIM-1][MAX_IMG_WIDTH-2], unsigned short delay_end);
 
 void init_hold(float hold[KERNEL_DIM][KERNEL_DIM-1]);
 
@@ -39,6 +43,6 @@ void init_kernel(float ker[DEPTH][KERNEL_DIM_SQR], float kernel[DEPTH][KERNEL_DI
 
 unsigned int validate_result(unsigned short top_grbg_size, float result, float *img_out);
 
-void advance_delay_line(float delay_line[KERNEL_DIM-1][MAX_IMG_WIDTH-2], float add_delay, unsigned short line_number);
+void advance_delay_line(float delay_line[MAX_IMG_WIDTH-2], float add_delay, unsigned short delay_end);
 
 #endif

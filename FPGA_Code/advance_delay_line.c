@@ -1,12 +1,11 @@
 #include "conv2d.h"
 
 
-void advance_delay_line(float delay_line[KERNEL_DIM-1][MAX_IMG_WIDTH-2], float add_delay, unsigned short line_number) {
+void advance_delay_line(float delay_line[MAX_IMG_WIDTH-2], float add_delay, unsigned short delay_end) {
     unsigned short i;
 
-    for (i = MAX_IMG_WIDTH-3; i > 0; i--) {
-#pragma HLS UNROLL
-        delay_line[line_number][i] = delay_line[line_number][i-1];
+    for (i = 0; i < delay_end; i++) {
+        delay_line[i] = delay_line[i+1];
     }
-    delay_line[line_number][i] = add_delay;
+    delay_line[delay_end] = add_delay;
 }
