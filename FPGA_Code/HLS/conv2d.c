@@ -21,7 +21,7 @@ void conv2d(float *img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short 
 
     unsigned int height = hght;
     unsigned short width = wdth;
-    unsigned short delay_end = width-3;
+    unsigned short delay_end = width - KERNEL_DIM;
 
     init_delay_line(delay_line, delay_end);
     init_kernel(ker, kernel);
