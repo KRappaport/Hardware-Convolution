@@ -72,14 +72,16 @@ void conv2d(float *img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short 
             if (col >= rght_edg_cmp) {
                 for (i = KERNEL_DIM_1; i > ((EDGE_AMOUNT) + (width-col) - 1); i--) {
                     for (k = 0; k < KERNEL_DIM_SQR; k += KERNEL_DIM) {
-#pragma HLS pipeline
+// #pragma HLS pipeline
+#pragma HLS UNROLL factor=3
                         mult_result[HIGH_KER_SQR_INDX-i-k] = 0;
                     }
                 }
             } else {
                 for (i = 0; i < (EDGE_AMOUNT)-col; i++) {
                     for (k = 0; k < KERNEL_DIM_SQR; k += KERNEL_DIM) {
-#pragma HLS pipeline
+// #pragma HLS pipeline
+#pragma HLS UNROLL factor=3
                         mult_result[HIGH_KER_SQR_INDX-i-k] = 0;
                     }
                 }
