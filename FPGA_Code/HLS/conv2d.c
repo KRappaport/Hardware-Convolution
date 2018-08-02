@@ -31,7 +31,7 @@ void conv2d(float *img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short 
     unsigned short initial_grbg = (width*(EDGE_AMOUNT)) + (EDGE_AMOUNT);
     unsigned short hold_indx1;
     unsigned short hold_indx2;
-    unsigned short rght_edg_cmp = width - EDGE_AMOUNT;
+    unsigned short rght_edg_cmp = width - (EDGE_AMOUNT);
 
     for (row = 0; row < height; row++) {
         unsigned short col;
