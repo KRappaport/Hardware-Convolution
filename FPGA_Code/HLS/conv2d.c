@@ -14,7 +14,7 @@ void conv2d(float *img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short 
     float insert_delay[KERNEL_DIM-1], result;
 
 #pragma HLS ARRAY_PARTITION variable=delay_line complete dim=1
-#pragma HLS resource variable=delay_line core=RAM_2P_BRAM
+#pragma HLS resource variable=delay_line core=RAM_T2P_BRAM
 #pragma HLS ARRAY_PARTITION variable=hold complete dim=0
 #pragma HLS ARRAY_PARTITION variable=kernel complete dim=0
 #pragma HLS ARRAY_PARTITION variable=insert_delay complete dim=0
@@ -72,7 +72,7 @@ void conv2d(float *img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short 
             if (col >= rght_edg_cmp) {
                 for (i = KERNEL_DIM_1; i > ((EDGE_AMOUNT) + (width-col) - 1); i--) {
                     for (k = 0; k < KERNEL_DIM_SQR; k += KERNEL_DIM) {
-// #pragma HLS pipeline
+#pragma HLS pipeline
 #pragma HLS UNROLL factor=3
                         mult_result[HIGH_KER_SQR_INDX-i-k] = 0;
                     }
@@ -80,7 +80,7 @@ void conv2d(float *img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short 
             } else {
                 for (i = 0; i < (EDGE_AMOUNT)-col; i++) {
                     for (k = 0; k < KERNEL_DIM_SQR; k += KERNEL_DIM) {
-// #pragma HLS pipeline
+#pragma HLS pipeline
 #pragma HLS UNROLL factor=3
                         mult_result[HIGH_KER_SQR_INDX-i-k] = 0;
                     }
