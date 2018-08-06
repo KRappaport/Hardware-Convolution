@@ -1,17 +1,17 @@
 #include "conv2d.h"
 
 
-void conv2d(float *img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short wdth, unsigned int hght, float *img_out){
-#pragma HLS INTERFACE axis port=img depth=300 bundle=IMG
-#pragma HLS INTERFACE axis port=img_out depth=100 bundle=IMG_OUT
+void conv2d(float *img, float ker[DEPTH][KERNEL_DIM_SQR], unsigned short wdth, unsigned int hght, float *img_out){
+#pragma HLS INTERFACE axis port=img depth=75 bundle=IMG
+#pragma HLS INTERFACE axis port=img_out depth=25 bundle=IMG_OUT
 #pragma HLS INTERFACE s_axilite port=return bundle=DIM
 #pragma HLS INTERFACE s_axilite port=wdth bundle=DIM
 #pragma HLS INTERFACE s_axilite port=hght bundle=DIM
 #pragma HLS INTERFACE s_axilite port=ker bundle=KER
 
-    float delay_line[KERNEL_DIM-1][MAX_IMG_WIDTH-2];
-    float kernel[DEPTH][KERNEL_DIM*KERNEL_DIM], hold[KERNEL_DIM][KERNEL_DIM-1];
-    float insert_delay[KERNEL_DIM-1], result;
+    float delay_line[KERNEL_DIM_1][MAX_IMG_WIDTH];
+    float kernel[DEPTH][KERNEL_DIM_SQR], hold[KERNEL_DIM][KERNEL_DIM_1];
+    float insert_delay[KERNEL_DIM_1], result;
 
 #pragma HLS ARRAY_PARTITION variable=delay_line complete dim=1
 #pragma HLS resource variable=delay_line core=RAM_T2P_BRAM
@@ -28,10 +28,10 @@ void conv2d(float *img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short 
     init_hold(hold);
 
     unsigned int row, done;
-    unsigned short initial_grbg = (width*(EDGE_AMOUNT)) + (EDGE_AMOUNT);
+    unsigned short initial_grbg = (width*EDGE_AMOUNT) + EDGE_AMOUNT;
     unsigned short hold_indx1;
     unsigned short hold_indx2;
-    unsigned short rght_edg_cmp = width - (EDGE_AMOUNT);
+    unsigned short rght_edg_cmp = width - EDGE_AMOUNT;
 
     for (row = 0; row < height; row++) {
         unsigned short col;
@@ -40,12 +40,12 @@ void conv2d(float *img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short 
 #pragma HLS ARRAY_PARTITION variable=current_pxl complete dim=0
             unsigned short depth;
 
-            float mult_result[KERNEL_DIM*KERNEL_DIM];
+            float mult_result[KERNEL_DIM_SQR];
 #pragma HLS ARRAY_PARTITION variable=mult_result complete dim=0
             unsigned short mult_indx;
 
             current_pxl[0] = *(img++);
-            for (mult_indx = 0; mult_indx < (KERNEL_DIM*KERNEL_DIM); mult_indx++) {
+            for (mult_indx = 0; mult_indx < KERNEL_DIM_SQR; mult_indx++) {
 #pragma HLS UNROLL factor=25
                 mult_result[mult_indx] = current_pxl[0]*kernel[0][mult_indx];
             }
@@ -54,7 +54,7 @@ void conv2d(float *img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short 
             for (depth = 1; depth < DEPTH; depth++) {
 #pragma HLS UNROLL
                 current_pxl[depth] = *(img++);
-                for (mult_indx = 0; mult_indx < (KERNEL_DIM*KERNEL_DIM); mult_indx++) {
+                for (mult_indx = 0; mult_indx < KERNEL_DIM_SQR; mult_indx++) {
 #pragma HLS UNROLL factor=25
                     mult_result[mult_indx] += current_pxl[depth]*kernel[depth][mult_indx];
                 }
@@ -70,7 +70,7 @@ void conv2d(float *img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short 
 
             short i,k;
             if (col >= rght_edg_cmp) {
-                for (i = KERNEL_DIM_1; i > ((EDGE_AMOUNT) + (width-col) - 1); i--) {
+                for (i = KERNEL_DIM_1; i > (EDGE_AMOUNT + (width-col) - 1); i--) {
                     for (k = 0; k < KERNEL_DIM_SQR; k += KERNEL_DIM) {
 #pragma HLS pipeline
 #pragma HLS UNROLL factor=3
@@ -78,7 +78,7 @@ void conv2d(float *img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short 
                     }
                 }
             } else {
-                for (i = 0; i < (EDGE_AMOUNT)-col; i++) {
+                for (i = 0; i < (EDGE_AMOUNT-col); i++) {
                     for (k = 0; k < KERNEL_DIM_SQR; k += KERNEL_DIM) {
 #pragma HLS pipeline
 #pragma HLS UNROLL factor=3
@@ -131,7 +131,7 @@ void conv2d(float *img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short 
         done++;
         unsigned short flush_amnt;
         hold_indx1 = KERNEL_DIM_1;
-        for (flush_amnt = KERNEL_DIM_2; flush_amnt >= (KERNEL_DIM>>1); flush_amnt--) {
+        for (flush_amnt = KERNEL_DIM_2; flush_amnt >= EDGE_AMOUNT; flush_amnt--) {
 #pragma HLS UNROLL
             for (hold_indx2 = KERNEL_DIM_2; hold_indx2 > 0; hold_indx2--) {
 #pragma HLS UNROLL

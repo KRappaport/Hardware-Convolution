@@ -1,7 +1,7 @@
 #include "conv2d.h"
 
 
-void init_delay_line(float delay_line[KERNEL_DIM-1][MAX_IMG_WIDTH-2], unsigned short delay_end){
+void init_delay_line(float delay_line[KERNEL_DIM_1][MAX_IMG_WIDTH], unsigned short delay_end){
 #pragma HLS inline
     unsigned short i,k;
 
