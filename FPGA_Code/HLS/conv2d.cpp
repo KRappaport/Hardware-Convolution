@@ -1,9 +1,9 @@
 #include "conv2d.h"
 
 
-void conv2d(float *img, float ker[DEPTH][KERNEL_DIM_SQR], unsigned short wdth, unsigned int hght, float *img_out){
-#pragma HLS INTERFACE axis port=img depth=75 bundle=IMG
-#pragma HLS INTERFACE axis port=img_out depth=25 bundle=IMG_OUT
+void conv2d(AXIS_PORT &img, float ker[DEPTH][KERNEL_DIM_SQR], unsigned short wdth, unsigned int hght, AXIS_PORT &img_out){
+#pragma HLS INTERFACE axis port=img bundle=IMG
+#pragma HLS INTERFACE axis port=img_out bundle=IMG_OUT
 #pragma HLS INTERFACE s_axilite port=return bundle=DIM
 #pragma HLS INTERFACE s_axilite port=wdth bundle=DIM
 #pragma HLS INTERFACE s_axilite port=hght bundle=DIM
@@ -11,7 +11,11 @@ void conv2d(float *img, float ker[DEPTH][KERNEL_DIM_SQR], unsigned short wdth, u
 
     float delay_line[KERNEL_DIM_1][MAX_IMG_WIDTH];
     float kernel[DEPTH][KERNEL_DIM_SQR], hold[KERNEL_DIM][KERNEL_DIM_1];
-    float insert_delay[KERNEL_DIM_1], result;
+    float insert_delay[KERNEL_DIM_1];
+    AXIS_STRUCT result;
+    result.strb = 0xF;
+    result.keep = 0xF;
+    result.last = 0;
 
 #pragma HLS ARRAY_PARTITION variable=delay_line complete dim=1
 #pragma HLS resource variable=delay_line core=RAM_T2P_BRAM
@@ -36,7 +40,7 @@ void conv2d(float *img, float ker[DEPTH][KERNEL_DIM_SQR], unsigned short wdth, u
     for (row = 0; row < height; row++) {
         unsigned short col;
         for (col = 0; col < width; col++) {
-            float current_pxl[DEPTH];
+            AXIS_STRUCT current_pxl[DEPTH];
 #pragma HLS ARRAY_PARTITION variable=current_pxl complete dim=0
             unsigned short depth;
 
@@ -44,19 +48,19 @@ void conv2d(float *img, float ker[DEPTH][KERNEL_DIM_SQR], unsigned short wdth, u
 #pragma HLS ARRAY_PARTITION variable=mult_result complete dim=0
             unsigned short mult_indx;
 
-            current_pxl[0] = *(img++);
+            current_pxl[0] = img.read();
             for (mult_indx = 0; mult_indx < KERNEL_DIM_SQR; mult_indx++) {
 #pragma HLS UNROLL factor=25
-                mult_result[mult_indx] = current_pxl[0]*kernel[0][mult_indx];
+                mult_result[mult_indx] = current_pxl[0].data*kernel[0][mult_indx];
             }
 
 
             for (depth = 1; depth < DEPTH; depth++) {
 #pragma HLS UNROLL
-                current_pxl[depth] = *(img++);
+                current_pxl[depth] = img.read();
                 for (mult_indx = 0; mult_indx < KERNEL_DIM_SQR; mult_indx++) {
 #pragma HLS UNROLL factor=25
-                    mult_result[mult_indx] += current_pxl[depth]*kernel[depth][mult_indx];
+                    mult_result[mult_indx] += current_pxl[depth].data*kernel[depth][mult_indx];
                 }
             }
 
@@ -88,8 +92,8 @@ void conv2d(float *img, float ker[DEPTH][KERNEL_DIM_SQR], unsigned short wdth, u
             }
 
 
-            result = hold[KERNEL_DIM_1][KERNEL_DIM_2] + mult_result[HIGH_KER_SQR_INDX];
-            done = validate_result(initial_grbg, result, img_out);
+            result.data = hold[KERNEL_DIM_1][KERNEL_DIM_2] + mult_result[HIGH_KER_SQR_INDX];
+            validate_result(initial_grbg, result, img_out);
             mult_indx = HIGH_KER_SQR_INDX-1;
             for (hold_indx2 = KERNEL_DIM_2; hold_indx2 > 0; hold_indx2--) {
 #pragma HLS UNROLL
@@ -127,8 +131,11 @@ void conv2d(float *img, float ker[DEPTH][KERNEL_DIM_SQR], unsigned short wdth, u
 
 
     for (row = 0; row < initial_grbg; row++) {
-        img_out[done] = hold[KERNEL_DIM_1][KERNEL_DIM_2];
-        done++;
+        result.data = hold[KERNEL_DIM_1][KERNEL_DIM_2];
+        if (row == (initial_grbg-1)) {
+            result.last = 1;
+        }
+        img_out.write(result);
         unsigned short flush_amnt;
         hold_indx1 = KERNEL_DIM_1;
         for (flush_amnt = KERNEL_DIM_2; flush_amnt >= EDGE_AMOUNT; flush_amnt--) {

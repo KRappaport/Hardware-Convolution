@@ -4,12 +4,18 @@
 
 int main() {
     int i,k;
-    float out[RESULT_SIZE];
+    float res[RESULT_SIZE];
     float ker[DEPTH][KERNEL_DIM_SQR];
     float img[IMAGE_HEIGHT*IMAGE_WIDTH*DEPTH];
+    AXIS_STRUCT image_data, result_data;
+    AXIS_PORT image, result;
     FILE *fp_img=NULL;
     FILE *fp_ker=NULL;
     FILE *fp_res=NULL;
+
+    image_data.last = 0;
+    image_data.keep = 0xF;
+    image_data.strb = 0xF;
 
     if ((fp_ker = fopen(KERNEL_FILE, "rb")) == NULL) {
         perror("Couldn't open file!");
@@ -44,24 +50,34 @@ int main() {
         return(-1);
     }
     fclose(fp_img);
+
+    for (i = 0; i < ((IMAGE_HEIGHT*IMAGE_WIDTH*DEPTH)-1); i++) {
+        image_data.data = img[i];
+        image.write(image_data);
+    }
+    image_data.data = img[i];
+    image_data.last = 1;
+    image.write(image_data);
+
     // printf("img[0]=%f\n", img[0]);
 
-    conv2d(img, ker, IMAGE_WIDTH, IMAGE_HEIGHT, out);
+    conv2d(image, ker, IMAGE_WIDTH, IMAGE_HEIGHT, result);
     // free(img);
 
     if ((fp_res = fopen(RESULT_FILE, "rb")) == NULL) {
         perror("Couldn't open file!");
         return(-1);
     }
-    if (read_result(fp_res, img) == -1) {
+    if (read_result(fp_res, res) == -1) {
         fclose(fp_res);
         return(-1);
     }
     fclose(fp_res);
 
     for (i = 0; i < RESULT_SIZE; i++) {
-        if (((out[i] - img[i]) > 0.005) || ((out[i] - img[i]) < -0.005)) {
-            printf("out[%d]=%f  result[%d]=%f\n", i, out[i], i, img[i]);
+        result_data = result.read();
+        if (((result_data.data - res[i]) > 0.005) || ((result_data.data - res[i]) < -0.005)) {
+            printf("SIM_result[%d]=%f  MATLAB_result[%d]=%f\n", i, result_data.data, i, res[i]);
             printf("TEST FAILED!\n");
             // free(result);
             return(0);
