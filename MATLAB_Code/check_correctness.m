@@ -32,3 +32,5 @@ for k = 1:20
 
     end
 end
+
+disp('Results match up');

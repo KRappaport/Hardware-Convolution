@@ -1,5 +1,5 @@
-% This script is used to compare the run time of conv_2d_mult_core against
-% that of conv_2d, for 2D convolution between an image with constant
+% This script is used to compare the run time of conv_2d_mult_core, conv_2d
+% conv2d, and conv2d_mult_core, for 2D convolution between an image with constant
 % size and a kernel with different sizes.
 
 
@@ -21,9 +21,12 @@ else
 end
 
 
-conv_2d_time= zeros(1,75);
+conv_2d_time = zeros(1,75);
 conv_2d_mult_core_time = zeros(1,75);
-bytes = zeros(ncores,2,75);
+conv2d_time = zeros(1,75);
+conv2d_mult_core_time = zeros(1,75);
+bytes1 = zeros(ncores,2,75);
+bytes2 = zeros(ncores,2,75);
 
 
 statuss = 'Status:    ';
@@ -45,8 +48,21 @@ for run_number = 1:run_amount
         tic;
         mcore_result = conv_2d_mult_core(in,ker,ncores);
         mcore_time = toc;
-        bytes(:,:,time_index_ker) = bytes(:,:,time_index_ker) + tocBytes(gcp);
+        bytes1(:,:,time_index_ker) = bytes1(:,:,time_index_ker) + tocBytes(gcp);
         conv_2d_mult_core_time(time_index_ker) = conv_2d_mult_core_time(time_index_ker) + mcore_time;
+
+
+        tic;
+        result = conv2d(in,ker);
+        reg_time = toc;
+        conv2d_time(time_index_ker) = conv2d_time(time_index_ker) + reg_time;
+
+        ticBytes(gcp);
+        tic;
+        mcore_result = conv2d_mult_core(in,ker);
+        mcore_time = toc;
+        bytes2(:,:,time_index_ker) = bytes2(:,:,time_index_ker) + tocBytes(gcp);
+        conv2d_mult_core_time(time_index_ker) = conv2d_mult_core_time(time_index_ker) + mcore_time;
 
         time_index_ker = time_index_ker+1;
 
@@ -62,12 +78,17 @@ end
 
 conv_2d_time = conv_2d_time./run_amount;
 conv_2d_mult_core_time = conv_2d_mult_core_time./run_amount;
-bytes = sum(bytes,1)./run_amount;
+bytes1 = sum(bytes1,1)./run_amount;
+
+conv2d_time = conv2d_time./run_amount;
+conv2d_mult_core_time = conv2d_mult_core_time./run_amount;
+bytes2 = sum(bytes2,1)./run_amount;
 
 % regular plot take
 
 k_s = 1:2:149;
 
+% conv_2d vs. conv_2d_mult_core
 mcore_var_ker(1) = figure;
 plot(k_s,conv_2d_time.*1E3);
 hold on;
@@ -77,7 +98,6 @@ xlabel('kernel size');
 ylabel('time [ms]');
 legend('conv\_2d','conv\_2d\_mult\_core','Location','northwest');
 hold off;
-
 
 %double window plot
 mcore_var_ker(2) = figure;
@@ -95,18 +115,88 @@ xlabel('kernel size');
 ylabel('time [ms]');
 hold off;
 
-mcore_var_ker_bytes = figure;
+mcore_var_ker_bytes(1) = figure;
 hold on;
 subplot(2,1,1);
-plot(k_s, squeeze(bytes(1,1,:)));
+plot(k_s, squeeze(bytes1(1,1,:)));
 title('Bytes Transferred');
 xlabel('kernel size');
 ylabel('Bytes');
 subplot(2,1,2);
-plot(k_s, squeeze(bytes(1,2,:)));
+plot(k_s, squeeze(bytes1(1,2,:)));
 title('Bytes Received')
 xlabel('kernel size');
 ylabel('Bytes');
+hold off;
+
+
+% conv2d vs. conv2d_mult_core
+mcore_var_ker(3) = figure;
+plot(k_s,conv2d_time.*1E3);
+hold on;
+plot(k_s,conv2d_mult_core_time.*1E3);
+title({'Run Time for Various Kernel Sizes:', 'conv2d vs. conv2d_mult_core'}, 'Interpreter', 'none');
+xlabel('kernel size');
+ylabel('time [ms]');
+legend('conv2d','conv2d\_mult\_core','Location','northwest');
+hold off;
+
+%double window plot
+mcore_var_ker(4) = figure;
+hold on;
+subplot(2,1,1);
+plot(k_s,conv2d_time.*1E3);
+title('Run Time for Various Kernel Sizes: conv2d', 'Interpreter', 'none');
+xlabel('kernel size');
+ylabel('time [ms]');
+
+subplot(2,1,2);
+plot(k_s,conv2d_mult_core_time.*1E3,'red');
+title('Run Time for Various Kernel Sizes: conv2d_mult_core', 'Interpreter', 'none');
+xlabel('kernel size');
+ylabel('time [ms]');
+hold off;
+
+mcore_var_ker_bytes(2) = figure;
+hold on;
+subplot(2,1,1);
+plot(k_s, squeeze(bytes2(1,1,:)));
+title('Bytes Transferred');
+xlabel('kernel size');
+ylabel('Bytes');
+subplot(2,1,2);
+plot(k_s, squeeze(bytes2(1,2,:)));
+title('Bytes Received')
+xlabel('kernel size');
+ylabel('Bytes');
+hold off;
+
+
+% conv_2d_mult_core vs. conv2d_mult_core
+mcore_var_ker(5) = figure;
+plot(k_s,conv_2d_mult_core_time.*1E3);
+hold on;
+plot(k_s,conv2d_mult_core_time.*1E3);
+title({'Run Time for Various Kernel Sizes:', 'conv_2d_mult_core vs. conv2d_mult_core'}, 'Interpreter', 'none');
+xlabel('image size');
+ylabel('time [ms]');
+legend('conv\_2d\_mult\_core','conv2d\_mult\_core','Location','northwest');
+hold off;
+
+%double window plot
+mcore_var_ker(6) = figure;
+hold on;
+subplot(2,1,1);
+plot(k_s,conv_2d_mult_core_time.*1E3);
+title('Run Time for Various Kernel Sizes: conv_2d_mult_core', 'Interpreter', 'none');
+xlabel('image size');
+ylabel('time [ms]');
+
+subplot(2,1,2);
+plot(k_s,conv2d_mult_core_time.*1E3,'red');
+title('Run Time for Various Kernel Sizes: conv2d_mult_core', 'Interpreter', 'none');
+xlabel('image size');
+ylabel('time [ms]');
 hold off;
 
 fprintf('\n');
