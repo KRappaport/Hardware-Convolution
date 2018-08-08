@@ -1,3 +1,5 @@
+#include <hls_stream.h>
+#include <ap_int.h>
 #include "conv2d.h"
 
 
@@ -9,16 +11,14 @@ void conv2d(AXIS_PORT &img, float ker[DEPTH][KERNEL_DIM_SQR], unsigned short wdt
 #pragma HLS INTERFACE s_axilite port=hght bundle=DIM
 #pragma HLS INTERFACE s_axilite port=ker bundle=KER
 
-    float delay_line[KERNEL_DIM_1][MAX_IMG_WIDTH];
     float kernel[DEPTH][KERNEL_DIM_SQR], hold[KERNEL_DIM][KERNEL_DIM_1];
     float insert_delay[KERNEL_DIM_1];
+
     AXIS_STRUCT result;
     result.strb = 0xF;
     result.keep = 0xF;
     result.last = 0;
 
-#pragma HLS ARRAY_PARTITION variable=delay_line complete dim=1
-#pragma HLS resource variable=delay_line core=RAM_T2P_BRAM
 #pragma HLS ARRAY_PARTITION variable=hold complete dim=0
 #pragma HLS ARRAY_PARTITION variable=kernel complete dim=0
 #pragma HLS ARRAY_PARTITION variable=insert_delay complete dim=0
@@ -27,8 +27,12 @@ void conv2d(AXIS_PORT &img, float ker[DEPTH][KERNEL_DIM_SQR], unsigned short wdt
     unsigned short width = wdth;
     unsigned short delay_end = width - KERNEL_DIM;
 
+    hls::stream<float> delay_line[KERNEL_DIM_1];
+#pragma HLS stream variable=delay_line depth=256
     init_delay_line(delay_line, delay_end);
+
     init_kernel(ker, kernel);
+
     init_hold(hold);
 
     unsigned int row, done;
@@ -100,25 +104,25 @@ void conv2d(AXIS_PORT &img, float ker[DEPTH][KERNEL_DIM_SQR], unsigned short wdt
                 hold[KERNEL_DIM_1][hold_indx2] = hold[KERNEL_DIM_1][hold_indx2-1] + mult_result[mult_indx];
                 mult_indx--;
             }
-            hold[KERNEL_DIM_1][0] = delay_line[KERNEL_DIM_1-1][0] + mult_result[mult_indx];
+            hold[KERNEL_DIM_1][0] = delay_line[KERNEL_DIM_1-1].read() + mult_result[mult_indx];
 
             for (hold_indx1 = KERNEL_DIM_2; hold_indx1 > 0; hold_indx1--) {
 #pragma HLS UNROLL
                 mult_indx--;
                 insert_delay[hold_indx1] = hold[hold_indx1][KERNEL_DIM_2] + mult_result[mult_indx];
-                advance_delay_line(delay_line[hold_indx1], insert_delay[hold_indx1], delay_end);
+                delay_line[hold_indx1].write(insert_delay[hold_indx1]);
                 mult_indx--;
                 for (hold_indx2 = KERNEL_DIM_2; hold_indx2 > 0; hold_indx2--) {
 #pragma HLS UNROLL
                     hold[hold_indx1][hold_indx2] = hold[hold_indx1][hold_indx2-1] + mult_result[mult_indx];
                     mult_indx--;
                 }
-                hold[hold_indx1][0] = delay_line[hold_indx1-1][0] + mult_result[mult_indx];
+                hold[hold_indx1][0] = delay_line[hold_indx1-1].read() + mult_result[mult_indx];
             }
 
             mult_indx--;
             insert_delay[0] = hold[0][KERNEL_DIM_2] + mult_result[mult_indx];
-            advance_delay_line(delay_line[0], insert_delay[0], delay_end);
+            delay_line[0].write(insert_delay[0]);
             mult_indx--;
             for (hold_indx2 = KERNEL_DIM_2; hold_indx2 > 0; hold_indx2--) {
 #pragma HLS UNROLL
@@ -144,14 +148,17 @@ void conv2d(AXIS_PORT &img, float ker[DEPTH][KERNEL_DIM_SQR], unsigned short wdt
 #pragma HLS UNROLL
                 hold[hold_indx1][hold_indx2] = hold[hold_indx1][hold_indx2-1];
             }
-            hold[hold_indx1][0] = delay_line[flush_amnt][0];
+            hold[hold_indx1][0] = delay_line[flush_amnt].read();
             hold_indx1--;
-            advance_delay_line(delay_line[flush_amnt], hold[hold_indx1][KERNEL_DIM_2], delay_end);
+            delay_line[flush_amnt].write(hold[hold_indx1][KERNEL_DIM_2]);
         }
         for (hold_indx2 = KERNEL_DIM_2; hold_indx2 > 0; hold_indx2--) {
 #pragma HLS UNROLL
             hold[hold_indx1][hold_indx2] = hold[hold_indx1][hold_indx2-1];
         }
     }
+
+    flush_delay_line(delay_line);
+
 
 }

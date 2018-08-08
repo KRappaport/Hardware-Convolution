@@ -1,15 +1,16 @@
+#include <hls_stream.h>
 #include "conv2d.h"
 
 
-void init_delay_line(float delay_line[KERNEL_DIM_1][MAX_IMG_WIDTH], unsigned short delay_end){
-#pragma HLS inline
-    unsigned short i,k;
+void init_delay_line(hls::stream<float> delay_line[KERNEL_DIM_1], unsigned short delay_end) {
+#pragma HLS inline off
+    unsigned char dl;
+    unsigned short init_push;
 
-    for (i = 0; i < KERNEL_DIM_1; i++) {
+    for (dl = 0; dl < KERNEL_DIM_1; dl++) {
 #pragma HLS UNROLL
-        for (k = 0; k <= delay_end; k++) {
-#pragma HLS UNROLL factor=2 skip_exit_check
-            delay_line[i][k] = 0;
+        for (init_push = 0; init_push <= delay_end; init_push++) {
+            delay_line[dl].write(0);
         }
     }
 }

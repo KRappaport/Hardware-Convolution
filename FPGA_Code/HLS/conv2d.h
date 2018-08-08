@@ -51,7 +51,7 @@ typedef hls::stream<AXIS_STRUCT> AXIS_PORT;
 
 void conv2d(AXIS_PORT &img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short wdth, unsigned int hght, AXIS_PORT &img_out);
 
-void init_delay_line(float delay_line[KERNEL_DIM_1][MAX_IMG_WIDTH], unsigned short delay_end);
+void init_delay_line(hls::stream<float> delay_line[KERNEL_DIM_1], unsigned short delay_end);
 
 void init_hold(float hold[KERNEL_DIM][KERNEL_DIM_1]);
 
@@ -59,6 +59,6 @@ void init_kernel(float ker[DEPTH][KERNEL_DIM_SQR], float kernel[DEPTH][KERNEL_DI
 
 void validate_result(unsigned short top_grbg_size, AXIS_STRUCT result, AXIS_PORT &img_out);
 
-void advance_delay_line(float delay_line[MAX_IMG_WIDTH], float add_delay, unsigned short delay_end);
+void flush_delay_line(hls::stream<float> delay_line[KERNEL_DIM_1]);
 
 #endif
