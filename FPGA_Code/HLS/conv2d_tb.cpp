@@ -5,7 +5,7 @@
 int main() {
     int i,k;
     float res[RESULT_SIZE];
-    float ker[DEPTH][KERNEL_DIM_SQR];
+    float ker[MAX_DEPTH][MAX_KERNEL_DIM_SQR];
     float img[IMAGE_HEIGHT*IMAGE_WIDTH*DEPTH];
     AXIS_STRUCT image_data, result_data;
     AXIS_PORT image, result;

@@ -3,13 +3,13 @@
 #include "conv2d.h"
 
 
-void conv2d(AXIS_PORT &img, float ker[DEPTH][KERNEL_DIM_SQR], unsigned short wdth, unsigned int hght, AXIS_PORT &img_out){
+void conv2d(AXIS_PORT &img, float ker[MAX_DEPTH][MAX_KERNEL_DIM_SQR], unsigned short wdth, unsigned int hght, AXIS_PORT &img_out){
 #pragma HLS INTERFACE axis port=img bundle=IMG
 #pragma HLS INTERFACE axis port=img_out bundle=IMG_OUT
 #pragma HLS INTERFACE s_axilite port=return bundle=DIM
 #pragma HLS INTERFACE s_axilite port=wdth bundle=DIM
 #pragma HLS INTERFACE s_axilite port=hght bundle=DIM
-#pragma HLS INTERFACE s_axilite port=ker bundle=KER
+#pragma HLS INTERFACE bram port=ker bundle=KER
 
     float kernel[DEPTH][KERNEL_DIM_SQR], hold[KERNEL_DIM][KERNEL_DIM_1];
     float insert_delay[KERNEL_DIM_1];

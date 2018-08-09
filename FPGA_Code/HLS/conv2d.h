@@ -9,6 +9,14 @@
 #define DEPTH 3
 #endif
 
+#ifndef MAX_KERNEL_DIM_SQR
+#define MAX_KERNEL_DIM_SQR 49
+#endif
+
+#ifndef MAX_DEPTH
+#define MAX_DEPTH 11
+#endif
+
 #ifndef MAX_IMG_WIDTH
 #define MAX_IMG_WIDTH 1024
 #endif
@@ -49,13 +57,13 @@ template<int D,int U,int TI,int TD>
 typedef ap_axis_fp <32,1,1,1> AXIS_STRUCT;
 typedef hls::stream<AXIS_STRUCT> AXIS_PORT;
 
-void conv2d(AXIS_PORT &img, float ker[DEPTH][KERNEL_DIM*KERNEL_DIM], unsigned short wdth, unsigned int hght, AXIS_PORT &img_out);
+void conv2d(AXIS_PORT &img, float ker[MAX_DEPTH][MAX_KERNEL_DIM_SQR], unsigned short wdth, unsigned int hght, AXIS_PORT &img_out);
 
 void init_delay_line(hls::stream<float> delay_line[KERNEL_DIM_1], unsigned short delay_end);
 
 void init_hold(float hold[KERNEL_DIM][KERNEL_DIM_1]);
 
-void init_kernel(float ker[DEPTH][KERNEL_DIM_SQR], float kernel[DEPTH][KERNEL_DIM_SQR]);
+void init_kernel(float ker[MAX_DEPTH][MAX_KERNEL_DIM_SQR], float kernel[DEPTH][KERNEL_DIM_SQR]);
 
 void validate_result(unsigned short top_grbg_size, AXIS_STRUCT result, AXIS_PORT &img_out);
 

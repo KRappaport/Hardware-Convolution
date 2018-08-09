@@ -1,7 +1,7 @@
 #include "conv2d.h"
 
 
-void init_kernel(float ker[DEPTH][KERNEL_DIM_SQR], float kernel[DEPTH][KERNEL_DIM_SQR]){
+void init_kernel(float ker[MAX_DEPTH][MAX_KERNEL_DIM_SQR], float kernel[DEPTH][KERNEL_DIM_SQR]){
     unsigned short i,k;
 // #pragma HLS pipeline
 
