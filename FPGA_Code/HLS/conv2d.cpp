@@ -60,7 +60,11 @@ void conv2d(AXIS_PORT &img, float ker[DEPTH][KERNEL_DIM_SQR], unsigned short wdt
 
 
             for (depth = 1; depth < DEPTH; depth++) {
+#if KERNEL_DIM == 7
+#pragma HLS pipeline
+#else
 #pragma HLS UNROLL
+#endif
                 current_pxl[depth] = img.read();
                 for (mult_indx = 0; mult_indx < KERNEL_DIM_SQR; mult_indx++) {
 #pragma HLS UNROLL factor=25
@@ -81,7 +85,9 @@ void conv2d(AXIS_PORT &img, float ker[DEPTH][KERNEL_DIM_SQR], unsigned short wdt
                 for (i = KERNEL_DIM_1; i > (EDGE_AMOUNT + (width-col) - 1); i--) {
                     for (k = 0; k < KERNEL_DIM_SQR; k += KERNEL_DIM) {
 #pragma HLS pipeline
+#if !((KERNEL_DIM == 7) && (DEPTH > 8))
 #pragma HLS UNROLL factor=3
+#endif
                         mult_result[HIGH_KER_SQR_INDX-i-k] = 0;
                     }
                 }
@@ -89,7 +95,9 @@ void conv2d(AXIS_PORT &img, float ker[DEPTH][KERNEL_DIM_SQR], unsigned short wdt
                 for (i = 0; i < (EDGE_AMOUNT-col); i++) {
                     for (k = 0; k < KERNEL_DIM_SQR; k += KERNEL_DIM) {
 #pragma HLS pipeline
+#if !((KERNEL_DIM == 7) && (DEPTH > 8))
 #pragma HLS UNROLL factor=3
+#endif
                         mult_result[HIGH_KER_SQR_INDX-i-k] = 0;
                     }
                 }
