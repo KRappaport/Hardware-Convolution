@@ -33,5 +33,13 @@ int main() {
     float kernel[3][9];
     set_ker(kernel, 3, 3);
 
+    printf("Starting Conv2D...\n");
+    if (XConv2d_IsReady(&instptr)) {
+        XConv2d_Start(&instptr);
+    } else {
+        printf("ERROR: Conv2D not ready!\n");
+        exit(-1);
+    }
+
     return 0;
 }
