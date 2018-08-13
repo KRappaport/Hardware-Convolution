@@ -4,6 +4,7 @@
 #include "xconv2d_hw.h"
 #include "xil_cache.h"
 #include "xaxidma.h"
+#include "xtime_l.h"
 #include "inits.h"
 #include "set_ker.h"
 
@@ -25,6 +26,9 @@ int main() {
         printf("AxiDma setup failed!\n");
         exit(-1);
     }
+
+    XTime start, end;
+    XTime_GetTime(&start);
 
     unsigned short width = 10;
     XConv2d_Set_wdth(&instptr, width);
@@ -69,7 +73,13 @@ int main() {
     }
     printf("Transfer complete\n");
 
-    Xil_DCacheInvalidateRange((unsigned)result, 100*sizeof(float));    
+    Xil_DCacheInvalidateRange((unsigned)result, 100*sizeof(float));
+
+    XTime_GetTime(&end);
+
+    double conv_exec_time;
+    conv_exec_time = (double)(end - start)/COUNTS_PER_SECOND;
+    printf("Execution time: %f\n", conv_exec_time);
 
     return 0;
 }
