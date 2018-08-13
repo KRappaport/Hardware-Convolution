@@ -2,6 +2,7 @@
 #include "xparameters.h"
 #include "xconv2d.h"
 #include "xconv2d_hw.h"
+#include "xil_cache.h"
 #include "xaxidma.h"
 #include "inits.h"
 #include "set_ker.h"
@@ -40,6 +41,35 @@ int main() {
         printf("ERROR: Conv2D not ready!\n");
         exit(-1);
     }
+    printf("Started.\n");
+
+    float image[300], result[100];
+    Xil_DCacheFlushRange((unsigned)image, 300*sizeof(float));
+    Xil_DCacheInvalidateRange((unsigned)result, 100*sizeof(float));
+
+    printf("Initiate image transfer...\n");
+    status = XAxiDma_SimpleTransfer(&axidma, (u32)image, 300*sizeof(float), XAXIDMA_DMA_TO_DEVICE);
+    if (status != XST_SUCCESS) {
+        printf("ERROR: Image transfer failed!\n");
+        exit(-1);
+    }
+    printf("Transferring image\n");
+
+    printf("Initiate result transfer...\n");
+    status = XAxiDma_SimpleTransfer(&axidma, (u32)result, 100*sizeof(float), XAXIDMA_DEVICE_TO_DMA);
+    if (status != XST_SUCCESS) {
+        printf("ERROR: Result transfer failed!\n");
+        exit(-1);
+    }
+    printf("Transferring result\n");
+
+    printf("Waiting for results to finish transferring...\n");
+    while (XAxiDma_Busy(&axidma, XAXIDMA_DEVICE_TO_DMA)) {
+        /* code */
+    }
+    printf("Transfer complete\n");
+
+    Xil_DCacheInvalidateRange((unsigned)result, 100*sizeof(float));    
 
     return 0;
 }
