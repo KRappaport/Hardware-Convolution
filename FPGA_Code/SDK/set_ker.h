@@ -8,6 +8,6 @@
 
 #include "xparameters.h"
 
-void set_ker(float kernel[][], unsigned short dimension, unsigned short depth);
+void set_ker(float *kernel[], unsigned short dimension, unsigned short depth);
 
 #endif
