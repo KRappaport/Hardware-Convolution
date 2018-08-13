@@ -4,6 +4,7 @@
 #include "xconv2d_hw.h"
 #include "xaxidma.h"
 #include "inits.h"
+#include "set_ker.h"
 
 
 int main() {
@@ -29,6 +30,8 @@ int main() {
     unsigned int height = 10;
     XConv2d_Set_hght(&instptr, height);
 
+    float kernel[3][9];
+    set_ker(kernel, 3, 3);
 
     return 0;
 }
