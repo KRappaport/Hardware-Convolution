@@ -1,10 +1,13 @@
 #include <stdio.h>
 #include "xparameters.h"
+#include "xstatus.h"
 #include "xconv2d.h"
 #include "xconv2d_hw.h"
 #include "xil_cache.h"
 #include "xaxidma.h"
 #include "xtime_l.h"
+#include "xsdps.h"
+#include "ff.h"
 #include "inits.h"
 #include "set_ker.h"
 
@@ -24,6 +27,13 @@ int main() {
     status = dma_init(&axidma);
     if (status != XST_SUCCESS) {
         printf("AxiDma setup failed!\n");
+        exit(-1);
+    }
+
+    FATFS fs;
+    status = file_system_init(&fs);
+    if (status != XST_SUCCESS) {
+        printf("File system setup failed!\n");
         exit(-1);
     }
 
