@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "xparameters.h"
 #include "xstatus.h"
 #include "xconv2d.h"
@@ -9,7 +10,7 @@
 #include "xsdps.h"
 #include "ff.h"
 #include "inits.h"
-#include "set_ker.h"
+#include "data_handling.h"
 
 
 int main() {
@@ -37,13 +38,21 @@ int main() {
         exit(-1);
     }
 
+    TCHAR *image_file;
+    int dim;
+    float *image;
+    dim = read_image(&image, image_file);
+    if (dim == -1) {
+        exit(-1);
+    }
+
     XTime start, end;
     XTime_GetTime(&start);
 
-    unsigned short width = 10;
-    XConv2d_Set_wdth(&instptr, width);
-    unsigned int height = 10;
-    XConv2d_Set_hght(&instptr, height);
+    // unsigned short width = 10;
+    XConv2d_Set_wdth(&instptr, dim);
+    // unsigned int height = 10;
+    XConv2d_Set_hght(&instptr, dim);
 
     float kernel[3][9];
     set_ker(kernel, 3, 3);
@@ -57,7 +66,7 @@ int main() {
     }
     printf("Started.\n");
 
-    float image[300], result[100];
+    float result[100];
     Xil_DCacheFlushRange((unsigned)image, 300*sizeof(float));
     Xil_DCacheInvalidateRange((unsigned)result, 100*sizeof(float));
 
