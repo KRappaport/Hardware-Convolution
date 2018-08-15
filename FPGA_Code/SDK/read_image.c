@@ -5,6 +5,7 @@
 #include "xsdps.h"
 #include "ff.h"
 
+extern unsigned short image_dim[3];
 
 int read_image(float **image, TCHAR *filename) {
     FIL *fp;
@@ -16,9 +17,8 @@ int read_image(float **image, TCHAR *filename) {
         return(-1);
     }
 
-    unsigned short dim[3];
     unsigned int bytesread, image_size;
-    res = f_read(fp, dim, 3*sizeof(short), &bytesread);
+    res = f_read(fp, image_dim, 3*sizeof(short), &bytesread);
     if (res != FR_OK) {
         printf("ERROR: Failed to read image dimensions! \t Error Code: %d\n", res);
         f_close(fp);
@@ -29,7 +29,7 @@ int read_image(float **image, TCHAR *filename) {
         return(-1);
     }
 
-    image_size = dim[0]*dim[1]*dim[2];
+    image_size = image_dim[0]*image_dim[1]*image_dim[2];
     *image = (float*)calloc(image_size, sizeof(float));
     if (*image == NULL) {
         printf("ERROR: Failed to allocate memory for the image!\n");
@@ -61,5 +61,5 @@ int read_image(float **image, TCHAR *filename) {
         return(-1);
     }
 
-    return(dim[0]);
+    return(image_size);
 }

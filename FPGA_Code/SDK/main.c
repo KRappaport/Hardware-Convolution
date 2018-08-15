@@ -12,6 +12,8 @@
 #include "inits.h"
 #include "data_handling.h"
 
+unsigned short image_dim[3];
+
 
 int main() {
 
@@ -39,10 +41,10 @@ int main() {
     }
 
     TCHAR *image_file;
-    int dim;
+    int image_size;
     float *image;
-    dim = read_image(&image, image_file);
-    if (dim == -1) {
+    image_size = read_image(&image, image_file);
+    if (image_size == -1) {
         exit(-1);
     }
 
@@ -50,9 +52,9 @@ int main() {
     XTime_GetTime(&start);
 
     // unsigned short width = 10;
-    XConv2d_Set_wdth(&instptr, dim);
+    XConv2d_Set_wdth(&instptr, image_dim[0]);
     // unsigned int height = 10;
-    XConv2d_Set_hght(&instptr, dim);
+    XConv2d_Set_hght(&instptr, image_dim[1]);
 
     float kernel[3][9];
     set_ker(kernel, 3, 3);
@@ -67,11 +69,11 @@ int main() {
     printf("Started.\n");
 
     float result[100];
-    Xil_DCacheFlushRange((unsigned)image, 300*sizeof(float));
-    Xil_DCacheInvalidateRange((unsigned)result, 100*sizeof(float));
+    Xil_DCacheFlushRange((unsigned)image, image_size*sizeof(float));
+    Xil_DCacheInvalidateRange((unsigned)result, image_dim[0]*image_dim[1]*sizeof(float));
 
     printf("Initiate image transfer...\n");
-    status = XAxiDma_SimpleTransfer(&axidma, (u32)image, 300*sizeof(float), XAXIDMA_DMA_TO_DEVICE);
+    status = XAxiDma_SimpleTransfer(&axidma, (u32)image, image_size*sizeof(float), XAXIDMA_DMA_TO_DEVICE);
     if (status != XST_SUCCESS) {
         printf("ERROR: Image transfer failed!\n");
         exit(-1);
@@ -79,7 +81,7 @@ int main() {
     printf("Transferring image\n");
 
     printf("Initiate result transfer...\n");
-    status = XAxiDma_SimpleTransfer(&axidma, (u32)result, 100*sizeof(float), XAXIDMA_DEVICE_TO_DMA);
+    status = XAxiDma_SimpleTransfer(&axidma, (u32)result, image_dim[0]*image_dim[1]*sizeof(float), XAXIDMA_DEVICE_TO_DMA);
     if (status != XST_SUCCESS) {
         printf("ERROR: Result transfer failed!\n");
         exit(-1);
@@ -92,13 +94,15 @@ int main() {
     }
     printf("Transfer complete\n");
 
-    Xil_DCacheInvalidateRange((unsigned)result, 100*sizeof(float));
+    Xil_DCacheInvalidateRange((unsigned)result, image_dim[0]*image_dim[1]*sizeof(float));
 
     XTime_GetTime(&end);
 
     double conv_exec_time;
     conv_exec_time = (double)(end - start)/COUNTS_PER_SECOND;
     printf("Execution time: %f\n", conv_exec_time);
+
+    free(image);
 
     return 0;
 }
