@@ -6,7 +6,7 @@
 // 		access the array by a single placement of the sum rather than adding/accessing the array every iteration
 //		This is relevant only to METHODs 2&3
 
-//stream the piecemeal to stream output peicemeal as well
+//stream the piecemeal to stream output piecemeal as well
 
 #define KER_X 3
 #define KER_Y 3
@@ -25,13 +25,21 @@
 #define Y_STOP FLR_KY+1
 
 
-void conv_window( float ker_input[3][3][3] , float im[3][3][3], float conv_rslt[3][3] , int im_x, int im_y
+void conv_window( float ker_input[3][3][3] , float im_1[3][3][3], float im_2[3][3][3], float im_3[3][3][3],float conv_rslt[3][3] , int im_x, int im_y
 																			)  	// Commented out convrslt and im for the optimization of the ker flip loop
 {
 //make the proper interface-ports for ker_input,im,conv_rslt
-#pragma HLS interface m_axi port=ker_input bundle=ker_input depth=27
-#pragma HLS interface m_axi port=im  bundle=im depth=32*3*3
 
+#pragma HLS interface m_axi port=ker_input bundle=KER_INPUT depth=27
+#pragma HLS interface m_axi port=im  bundle=IM depth=32*3*3
+#pragma HLS interface axis port=conv_rslt bundle=CONV_RSLT
+
+#pragma HLS interface s_axilite port=im_x bundle=IM_DIM
+#pragma HLS interface s_axilite port=im_y bundle=IM_DIM
+
+#pragma HLS interface s_axilite port=im_1 bundle=IM_DATA
+#pragma HLS interface s_axilite port=im_2 bundle=IM_DATA
+#pragma HLS interface s_axilite port=im_3 bundle=IM_DATA
 
 //Commented out wndw_xy,index_sum im/ker_val for the optimization of the ker flip loop
 	int wndw_x,wndw_y,wndw_z,index_sum,index_sum_z,im_val,ker_val;
@@ -41,6 +49,7 @@ void conv_window( float ker_input[3][3][3] , float im[3][3][3], float conv_rslt[
 
 //for purpose of not having issues of accessing the ports copy the flipped kernel into a new kernel register
 	float ker[3][3][3];
+#pragma HLS array_partition variable=ker complete dim=0
 
 // the following is for a changing kernel size and hence non-constant variables in the for-loops
 //flip the kernel along x/y for all z-slices
