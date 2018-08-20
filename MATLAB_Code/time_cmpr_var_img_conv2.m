@@ -49,7 +49,7 @@ for run_number = 1:run_amount
         matlabcode_time = toc;
         mat_time(time_index_ker) = mat_time(time_index_ker) + matlabcode_time;
 
-        if (isequal(ker, net.Layer(2).Weights) == 0)
+        if (isequal(ker, net.Layers(2).Weights) == 0)
             disp('Kernels do not match up!')
             return
         end
