@@ -2,7 +2,7 @@
 #include "conv2d.h"
 
 
-void init_delay_line(hls::stream<float> delay_line[KERNEL_DIM_1], unsigned short delay_end) {
+void init_delay_line(FP_STREAM delay_line[KERNEL_DIM_1], unsigned short delay_end) {
 #pragma HLS inline off
     unsigned char dl;
     unsigned short init_push;

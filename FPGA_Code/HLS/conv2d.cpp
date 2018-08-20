@@ -29,7 +29,7 @@ void conv2d(AXIS_PORT &img, float ker[MAX_DEPTH][MAX_KERNEL_DIM_SQR], unsigned s
     unsigned short width = wdth;
     unsigned short delay_end = width - KERNEL_DIM;
 
-    hls::stream<float> delay_line[KERNEL_DIM_1];
+    FP_STREAM delay_line[KERNEL_DIM_1];
 #pragma HLS stream variable=delay_line depth=256
     init_delay_line(delay_line, delay_end);
 
@@ -146,29 +146,55 @@ void conv2d(AXIS_PORT &img, float ker[MAX_DEPTH][MAX_KERNEL_DIM_SQR], unsigned s
     }
 
 
-    for (row = 0; row < initial_grbg; row++) {
-        result.data = hold[KERNEL_DIM_1][KERNEL_DIM_2];
-        if (row == (initial_grbg-1)) {
-            result.last = 1;
-        }
-        img_out.write(result);
-        unsigned short flush_amnt;
-        hold_indx1 = KERNEL_DIM_1;
-        for (flush_amnt = KERNEL_DIM_2; flush_amnt >= EDGE_AMOUNT; flush_amnt--) {
+//     for (row = 0; row < initial_grbg; row++) {
+//         result.data = hold[KERNEL_DIM_1][KERNEL_DIM_2];
+//         if (row == (initial_grbg-1)) {
+//             result.last = 1;
+//         }
+//         img_out.write(result);
+//         unsigned short flush_amnt;
+//         hold_indx1 = KERNEL_DIM_1;
+//         for (flush_amnt = KERNEL_DIM_2; flush_amnt >= EDGE_AMOUNT; flush_amnt--) {
+// #pragma HLS UNROLL
+//             for (hold_indx2 = KERNEL_DIM_2; hold_indx2 > 0; hold_indx2--) {
+// #pragma HLS UNROLL
+//                 hold[hold_indx1][hold_indx2] = hold[hold_indx1][hold_indx2-1];
+//             }
+//             hold[hold_indx1][0] = delay_line[flush_amnt].read();
+//             hold_indx1--;
+//             delay_line[flush_amnt].write(hold[hold_indx1][KERNEL_DIM_2]);
+//         }
+//         for (hold_indx2 = KERNEL_DIM_2; hold_indx2 > 0; hold_indx2--) {
+// #pragma HLS UNROLL
+//             hold[hold_indx1][hold_indx2] = hold[hold_indx1][hold_indx2-1];
+//         }
+//     }
+    unsigned short j;
+    for (j = KERNEL_DIM_2; j > (KERNEL_DIM_2 - EDGE_AMOUNT); j--) {
 #pragma HLS UNROLL
-            for (hold_indx2 = KERNEL_DIM_2; hold_indx2 > 0; hold_indx2--) {
-#pragma HLS UNROLL
-                hold[hold_indx1][hold_indx2] = hold[hold_indx1][hold_indx2-1];
-            }
-            hold[hold_indx1][0] = delay_line[flush_amnt].read();
-            hold_indx1--;
-            delay_line[flush_amnt].write(hold[hold_indx1][KERNEL_DIM_2]);
-        }
+#pragma HLS pipeline
         for (hold_indx2 = KERNEL_DIM_2; hold_indx2 > 0; hold_indx2--) {
 #pragma HLS UNROLL
-            hold[hold_indx1][hold_indx2] = hold[hold_indx1][hold_indx2-1];
+#pragma HLS pipeline
+            result.data = hold[j+1][hold_indx2];
+            img_out.write(result);
+        }
+        result.data = hold[j+1][0];
+        img_out.write(result);
+        while (!delay_line[j].empty()) {
+            result.data = delay_line[j].read();
+            img_out.write(result);
         }
     }
+    for (hold_indx2 = KERNEL_DIM_2; hold_indx2 > (KERNEL_DIM_2 - EDGE_AMOUNT + 1); hold_indx2--) {
+#pragma HLS UNROLL
+#pragma HLS pipeline
+        result.data = hold[j+1][hold_indx2];
+        img_out.write(result);
+    }
+    result.data = hold[j+1][hold_indx2];
+    result.last = 1;
+    img_out.write(result);
 
     flush_delay_line(delay_line);
 
