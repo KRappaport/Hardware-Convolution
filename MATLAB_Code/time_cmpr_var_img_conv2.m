@@ -11,6 +11,7 @@ end
 
 
 depth = 3;
+pad = bitshift(depth, -1);
 
 conv_2d_time = zeros(1,252);
 conv2d_time = zeros(1,252);
@@ -42,13 +43,16 @@ for run_number = 1:run_amount
         mycode_time = toc;
         conv2d_time(time_index_ker) = conv2d_time(time_index_ker) + mycode_time;
 
-        mat_result = zeros(i_s, i_s);
+        net = matlab_NN_create(i_s, depth, 3, 1, pad, run_number);
         tic;
-        for z = 1:3
-            mat_result = mat_result + convn(in(:,:,z),ker(:,:,z),'same');
-        end
+        ret = net.predict(in) - net.Layers(2).Bias;
         matlabcode_time = toc;
         mat_time(time_index_ker) = mat_time(time_index_ker) + matlabcode_time;
+
+        if (isequal(ker, net.Layer(2).Weights) == 0)
+            disp('Kernels do not match up!')
+            return
+        end
 
         time_index_ker = time_index_ker+1;
 
@@ -75,10 +79,10 @@ plot(i_s,conv_2d_time.*1E3);
 hold on;
 plot(i_s,conv2d_time.*1E3);
 plot(i_s,mat_time.*1E3);
-title({'Run Time for Various Image Sizes:', 'conv_2d vs. conv2d vs. convn (MATLAB)'}, 'Interpreter', 'none');
+title({'Run Time for Various Image Sizes:', 'conv_2d vs. conv2d vs. MATLAB NN'}, 'Interpreter', 'none');
 xlabel('image size');
 ylabel('time [ms]');
-legend('conv\_2d','conv2d','convn (MATLAB)','Location','northwest');
+legend('conv\_2d','conv2d','MATLAB NN','Location','northwest');
 hold off;
 
 
@@ -99,7 +103,7 @@ ylabel('time [ms]');
 
 subplot(3,1,3);
 plot(i_s,mat_time.*1E3,'red');
-title('Run Time for Various Image Sizes: convn (MATLAB)');
+title('Run Time for Various Image Sizes: MATLAB NN');
 xlabel('image size');
 ylabel('time [ms]');
 hold off;

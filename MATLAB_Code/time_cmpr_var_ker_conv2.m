@@ -11,6 +11,7 @@ end
 
 
 depth = 3;
+pad = bitshift(depth, -1);
 
 basenameimg = './test_data/var_ker/depth3/img';
 basenameker = './test_data/var_ker/depth3/ker';
@@ -45,10 +46,9 @@ for run_number = 1:run_amount
         mycode_time = toc;
         conv2d_time(time_index_ker) = conv2d_time(time_index_ker) + mycode_time;
 
+        net = matlab_NN_create(32, depth, k_s, 1, pad, run_number);
         tic;
-        for z = 1:5
-            mat_result = mat_result + convn(in(:,:,z),ker(:,:,z),'same');
-        end
+        ret = net.predict(in) - net.Layers(2).Bias;
         matlabcode_time = toc;
         mat_time(time_index_ker) = mat_time(time_index_ker) + matlabcode_time;
 
@@ -77,10 +77,10 @@ plot(k_s,conv_2d_time.*1E3);
 hold on;
 plot(k_s,conv2d_time.*1E3);
 plot(k_s,mat_time.*1E3);
-title({'Run Time for Various Kernel Sizes:', 'conv_2d vs. conv2d vs. convn (MATLAB)'}, 'Interpreter', 'none');
+title({'Run Time for Various Kernel Sizes:', 'conv_2d vs. conv2d vs. MATLAB NN'}, 'Interpreter', 'none');
 xlabel('kernel size');
 ylabel('time [ms]');
-legend('conv\_2d','conv2d','convn (MATLAB)','Location','northwest');
+legend('conv\_2d','conv2d','MATLAB NN','Location','northwest');
 hold off;
 
 
@@ -101,7 +101,7 @@ ylabel('time [ms]');
 
 subplot(3,1,3);
 plot(k_s,mat_time.*1E3,'red');
-title('Run Time for Various Kernel Sizes: convn (MATLAB)');
+title('Run Time for Various Kernel Sizes: MATLAB NN');
 xlabel('kernel size');
 ylabel('time [ms]');
 hold off;
