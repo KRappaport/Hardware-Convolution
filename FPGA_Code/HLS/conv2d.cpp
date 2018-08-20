@@ -2,6 +2,8 @@
 #include <ap_int.h>
 #include "conv2d.h"
 
+extern unsigned short top_grbg_processed;
+
 
 void conv2d(AXIS_PORT &img, float ker[MAX_DEPTH][MAX_KERNEL_DIM_SQR], unsigned short wdth, unsigned int hght, AXIS_PORT &img_out){
 #pragma HLS INTERFACE axis port=img bundle=IMG
@@ -35,11 +37,13 @@ void conv2d(AXIS_PORT &img, float ker[MAX_DEPTH][MAX_KERNEL_DIM_SQR], unsigned s
 
     init_hold(hold);
 
+    top_grbg_processed = 0;
+
     unsigned int row, done;
     unsigned short initial_grbg = (width*EDGE_AMOUNT) + EDGE_AMOUNT;
-    unsigned short hold_indx1;
-    unsigned short hold_indx2;
+    unsigned short hold_indx1, hold_indx2;
     unsigned short rght_edg_cmp = width - EDGE_AMOUNT;
+
 
     for (row = 0; row < height; row++) {
         unsigned short col;
