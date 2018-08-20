@@ -4,15 +4,16 @@
 
 
 if ((exist('run_amount')==0) || (isnumeric(run_amount)==0) || (run_amount <= 0))
-    run_amount = 20;
+    run_amount = 10;
 else
     run_amount = floor(run_amount);
 end
 
 
-%diff image
+depth = 3;
 
-ker = rand(3,3,5);
+basenameimg = './test_data/var_img/depth3/img';
+basenameker = './test_data/var_img/depth3/ker3';
 
 if ((exist('ncores')==0) || (isnumeric(ncores)==0) || (ncores <= 0))
     ncores = 2;
@@ -21,12 +22,12 @@ else
 end
 
 
-conv_2d_time = zeros(1,75);
-conv_2d_mult_core_time = zeros(1,75);
-conv2d_time = zeros(1,75);
-conv2d_mult_core_time = zeros(1,75);
-bytes1 = zeros(ncores,2,75);
-bytes2 = zeros(ncores,2,75);
+conv_2d_time = zeros(1,252);
+conv_2d_mult_core_time = zeros(1,252);
+conv2d_time = zeros(1,252);
+conv2d_mult_core_time = zeros(1,252);
+bytes1 = zeros(ncores,2,252);
+bytes2 = zeros(ncores,2,252);
 
 
 statuss = 'Status:    ';
@@ -36,8 +37,11 @@ fprintf([statuss, updstat]);
 
 for run_number = 1:run_amount
     time_index_ker = 1;
-    for i_s = 10:20:1490
-        in = rand(i_s,i_s,5);
+    for i_s = 5:256
+        filename = sprintf('%s_%dx%dx%d_%d.tdatb', basenameimg, i_s, i_s, depth, cast(run_number,'uint16'));
+        [in,dimimg] = read_test_image(filename);
+        filename = sprintf('%s_%dx%dx%d_%d.tdatb', basenameker, i_s, i_s, depth, cast(run_number,'uint16'));
+        [ker,dimker] = read_test_kernel(filename);
 
         tic;
         reg_result = conv_2d(in,ker);
@@ -85,7 +89,7 @@ bytes2 = sum(bytes2,1)./run_amount;
 
 % regular plot take
 
-i_s = 10:20:1490;
+i_s = 5:256;
 
 % conv_2d vs. conv_2d_mult_core
 mcore_var_img(1) = figure;

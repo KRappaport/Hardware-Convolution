@@ -4,20 +4,20 @@
 
 
 if ((exist('run_amount')==0) || (isnumeric(run_amount)==0) || (run_amount <= 0))
-    run_amount = 20;
+    run_amount = 10;
 else
     run_amount = floor(run_amount);
 end
 
 
-%diff image
+depth = 3;
 
-ker = rand(3,3,5);
+conv_2d_time = zeros(1,252);
+conv2d_time = zeros(1,252);
+mat_time = zeros(1,252);
 
-conv_2d_time = zeros(1,75);
-conv2d_time = zeros(1,75);
-mat_time = zeros(1,75);
-
+basenameimg = './test_data/var_img/depth3/img';
+basenameker = './test_data/var_img/depth3/ker3';
 
 statuss = 'Status:    ';
 updstat = ['0%%  [' repmat(' ', 1, run_amount) ']'];
@@ -26,8 +26,11 @@ fprintf([statuss, updstat]);
 
 for run_number = 1:run_amount
     time_index_ker = 1;
-    for i_s = 10:20:1490
-        in = rand(i_s,i_s,5);
+    for i_s = 5:256
+        filename = sprintf('%s_%dx%dx%d_%d.tdatb', basenameimg, i_s, i_s, depth, cast(run_number,'uint16'));
+        [in,dimimg] = read_test_image(filename);
+        filename = sprintf('%s_%dx%dx%d_%d.tdatb', basenameker, i_s, i_s, depth, cast(run_number,'uint16'));
+        [ker,dimker] = read_test_kernel(filename);
 
         tic;
         result = conv_2d(in,ker);
@@ -65,7 +68,7 @@ mat_time = mat_time./run_amount;
 
 % regular plot take
 
-i_s = 10:20:1490;
+i_s = 5:256;
 
 var_img_2d(1) = figure;
 plot(i_s,conv_2d_time.*1E3);
