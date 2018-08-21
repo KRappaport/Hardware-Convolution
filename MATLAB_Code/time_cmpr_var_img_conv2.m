@@ -18,7 +18,6 @@ conv2d_time = zeros(1,252);
 mat_time = zeros(1,252);
 
 basenameimg = './test_data/var_img/depth3/img';
-basenameker = './test_data/var_img/depth3/ker3';
 
 statuss = 'Status:    ';
 updstat = ['0%%  [' repmat(' ', 1, run_amount) ']'];
@@ -30,29 +29,22 @@ for run_number = 1:run_amount
     for i_s = 5:256
         filename = sprintf('%s_%dx%dx%d_%d.tdatb', basenameimg, i_s, i_s, depth, cast(run_number,'uint16'));
         [in,dimimg] = read_test_image(filename);
-        filename = sprintf('%s_%dx%dx%d_%d.tdatb', basenameker, i_s, i_s, depth, cast(run_number,'uint16'));
-        [ker,dimker] = read_test_kernel(filename);
+        net = matlab_NN_create(i_s, depth, 3, 1, pad, run_number);
 
         tic;
-        result = conv_2d(in,ker);
+        result = conv_2d(in, net.Layers(2).Weights);
         mycode_time = toc;
         conv_2d_time(time_index_ker) = conv_2d_time(time_index_ker) + mycode_time;
 
         tic;
-        result = conv2d(in,ker);
+        result = conv2d(in, net.Layers(2).Weights);
         mycode_time = toc;
         conv2d_time(time_index_ker) = conv2d_time(time_index_ker) + mycode_time;
 
-        net = matlab_NN_create(i_s, depth, 3, 1, pad, run_number);
         tic;
         ret = net.predict(in) - net.Layers(2).Bias;
         matlabcode_time = toc;
         mat_time(time_index_ker) = mat_time(time_index_ker) + matlabcode_time;
-
-        if (isequal(ker, net.Layers(2).Weights) == 0)
-            disp('Kernels do not match up!')
-            return
-        end
 
         time_index_ker = time_index_ker+1;
 

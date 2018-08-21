@@ -14,7 +14,6 @@ depth = 3;
 pad = bitshift(depth, -1);
 
 basenameimg = './test_data/var_ker/depth3/img';
-basenameker = './test_data/var_ker/depth3/ker';
 
 mat_result = zeros(32,32);
 
@@ -33,20 +32,18 @@ for run_number = 1:run_amount
     filename = sprintf('%s_%dx%dx%d_%d.tdatb', basenameimg, 32, 32, depth, cast(run_number,'uint16'));
     [in,dimimg] = read_test_image(filename);
     for k_s = 3:2:9
-        filename = sprintf('%s%d_%dx%dx%d_%d.tdatb', basenameker, k_s, 32, 32, depth, cast(run_number,'uint16'));
-        [ker,dimker] = read_test_kernel(filename);
+        net = matlab_NN_create(32, depth, k_s, 1, pad, run_number);
 
         tic;
-        result = conv_2d(in,ker);
+        result = conv_2d(in, net.Layers(2).Weights);
         mycode_time = toc;
         conv_2d_time(time_index_ker) = conv_2d_time(time_index_ker) + mycode_time;
 
         tic;
-        result = conv2d(in,ker);
+        result = conv2d(in, net.Layers(2).Weights);
         mycode_time = toc;
         conv2d_time(time_index_ker) = conv2d_time(time_index_ker) + mycode_time;
 
-        net = matlab_NN_create(32, depth, k_s, 1, pad, run_number);
         tic;
         ret = net.predict(in) - net.Layers(2).Bias;
         matlabcode_time = toc;
