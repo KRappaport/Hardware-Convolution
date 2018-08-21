@@ -14,8 +14,12 @@
 
 unsigned short image_dim[3];
 
+extern int ps7_post_config();
+
 
 int main() {
+
+    ps7_post_config();
 
     int status;
 
