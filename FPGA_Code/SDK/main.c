@@ -69,7 +69,7 @@ int main() {
     XConv2d_Set_hght(&instptr, image_dim[1]);
 
 
-    set_ker(kernel, 3, 3);
+    set_ker(kernel, kernel_size, kernel_dim);
 
     printf("Starting Conv2D...\n");
     if (XConv2d_IsReady(&instptr)) {

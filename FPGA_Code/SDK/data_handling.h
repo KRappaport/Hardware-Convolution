@@ -13,7 +13,7 @@
 #include "xsdps.h"
 #include "ff.h"
 
-void set_ker(float *kernel[], unsigned short dimension, unsigned short depth);
+void set_ker(float *kernel, unsigned int kernel_size, unsigned short kernel_dim[3]);
 
 int read_image(float **image, TCHAR *filename);
 
