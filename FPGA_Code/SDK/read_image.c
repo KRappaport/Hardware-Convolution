@@ -5,7 +5,7 @@
 #include "xsdps.h"
 #include "ff.h"
 
-extern unsigned short image_dim[3];
+unsigned short image_dim[3];
 
 int read_image(float **image, TCHAR *filename) {
     FIL *fp;

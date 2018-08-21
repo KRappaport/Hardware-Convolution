@@ -6,6 +6,7 @@
 #endif
 
 
+#include <stdio.h>
 #include <stdlib.h>
 #include "xparameters.h"
 #include "xstatus.h"
@@ -15,5 +16,7 @@
 void set_ker(float *kernel[], unsigned short dimension, unsigned short depth);
 
 int read_image(float **image, TCHAR *filename);
+
+int read_kernel(float *kernel, TCHAR *filename);
 
 #endif

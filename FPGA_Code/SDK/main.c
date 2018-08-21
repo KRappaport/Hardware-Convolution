@@ -12,7 +12,8 @@
 #include "inits.h"
 #include "data_handling.h"
 
-unsigned short image_dim[3];
+extern unsigned short kernel_dim[3];
+extern unsigned short image_dim[3];
 
 extern int ps7_post_config();
 
@@ -44,6 +45,13 @@ int main() {
         exit(-1);
     }
 
+    int kernel_size;
+    float *kernel;
+    kernel_size = read_kernel(&kernel, *kernel_file);
+    if (kernel_size == -1) {
+        exit(-1);
+    }
+
     TCHAR *image_file;
     int image_size;
     float *image;
@@ -60,7 +68,7 @@ int main() {
     // unsigned int height = 10;
     XConv2d_Set_hght(&instptr, image_dim[1]);
 
-    float kernel[3][9];
+
     set_ker(kernel, 3, 3);
 
     printf("Starting Conv2D...\n");
