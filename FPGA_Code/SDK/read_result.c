@@ -30,9 +30,9 @@ int read_result(float **cmpr_result, TCHAR *filename) {
 
     result_size = result_dim[0]*result_dim[1];
     *cmpr_result = (float*)calloc(result_size, sizeof(float));
-    if (*result == NULL) {
+    if (*cmpr_result == NULL) {
         printf("ERROR: Failed to allocate memory for the result!\n");
-        f_close(fp);
+        f_close(&fp);
         return(-1);
     }
 

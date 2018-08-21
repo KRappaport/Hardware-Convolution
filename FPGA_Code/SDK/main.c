@@ -47,7 +47,7 @@ int main() {
 
     int kernel_size;
     float *kernel;
-    kernel_size = read_kernel(&kernel, *kernel_file);
+    kernel_size = read_kernel(&kernel, kernel_file);
     if (kernel_size == -1) {
         exit(-1);
     }
@@ -55,7 +55,7 @@ int main() {
     set_ker(kernel, kernel_size, kernel_dim);
     free(kernel);
 
-    TCHAR *image_file;
+
     int image_size;
     float *image;
     image_size = read_image(&image, image_file);
@@ -123,7 +123,7 @@ int main() {
 
     double conv_exec_time;
     conv_exec_time = (double)(end - start)/COUNTS_PER_SECOND;
-    printf("Execution time: %f\n", conv_exec_time);
+    printf("Execution time: %.9f\n", conv_exec_time);
 
     free(image);
 
@@ -140,6 +140,7 @@ int main() {
         exit(-1);
     }
 
+    unsigned int i;
     for (i = 0; i < cmpr_result_size; i++) {
         if (((result[i] - cmpr_result[i]) > 0.005) || ((result[i] - cmpr_result[i]) < -0.005)) {
             printf("FPGA_result[%d]=%f  cmpr_result[%d]=%f\n", i, result[i], i, cmpr_result[i]);
