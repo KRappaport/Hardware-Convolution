@@ -140,5 +140,19 @@ int main() {
         exit(-1);
     }
 
+    for (i = 0; i < cmpr_result_size; i++) {
+        if (((result[i] - cmpr_result[i]) > 0.005) || ((result[i] - cmpr_result[i]) < -0.005)) {
+            printf("FPGA_result[%d]=%f  cmpr_result[%d]=%f\n", i, result[i], i, cmpr_result[i]);
+            printf("TEST FAILED!\n");
+            free(result);
+            free(cmpr_result);
+           return(0);
+        }
+    }
+
+    printf("TEST PASSED!\n");
+    free(result);
+    free(cmpr_result);
+
     return 0;
 }
