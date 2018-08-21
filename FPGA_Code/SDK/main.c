@@ -53,6 +53,7 @@ int main() {
     }
 
     set_ker(kernel, kernel_size, kernel_dim);
+    free(kernel);
 
     TCHAR *image_file;
     int image_size;
@@ -70,12 +71,18 @@ int main() {
         XConv2d_Start(&instptr);
     } else {
         printf("ERROR: Conv2D not ready!\n");
+        free(image);
         exit(-1);
     }
     printf("Started.\n");
 
     float *result;
     result = (float*)calloc(image_dim[0]*image_dim[1], sizeof(float));
+    if (result == NULL) {
+        printf("ERROR: Failed to allocate memory for the result!\n");
+        free(image);
+        exit(-1);
+    }
 
     XTime start, end;
     XTime_GetTime(&start);
@@ -88,6 +95,8 @@ int main() {
     status = XAxiDma_SimpleTransfer(&axidma, (u32)image, image_size*sizeof(float), XAXIDMA_DMA_TO_DEVICE);
     if (status != XST_SUCCESS) {
         printf("ERROR: Image transfer failed!\n");
+        free(image);
+        free(result);
         exit(-1);
     }
     printf("Transferring image\n");
@@ -96,6 +105,8 @@ int main() {
     status = XAxiDma_SimpleTransfer(&axidma, (u32)result, image_dim[0]*image_dim[1]*sizeof(float), XAXIDMA_DEVICE_TO_DMA);
     if (status != XST_SUCCESS) {
         printf("ERROR: Result transfer failed!\n");
+        free(image);
+        free(result);
         exit(-1);
     }
     printf("Transferring result\n");
@@ -115,6 +126,19 @@ int main() {
     printf("Execution time: %f\n", conv_exec_time);
 
     free(image);
+
+    float *cmpr_result;
+    int cmpr_result_size;
+    cmpr_result_size = read_result(&cmpr_result, result_file);
+    if (cmpr_result_size == -1) {
+        free(result);
+        exit(-1);
+    } else if (cmpr_result_size != (image_dim[0]*image_dim[1])) {
+        printf("Comparison result file is not the correct size!\n");
+        free(result);
+        free(cmpr_result);
+        exit(-1);
+    }
 
     return 0;
 }

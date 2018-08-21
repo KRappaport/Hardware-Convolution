@@ -17,6 +17,8 @@ void set_ker(float *kernel, unsigned int kernel_size, unsigned short kernel_dim[
 
 int read_image(float **image, TCHAR *filename);
 
-int read_kernel(float *kernel, TCHAR *filename);
+int read_kernel(float **kernel, TCHAR *filename);
+
+int read_result(float **cmpr_result, TCHAR *filename);
 
 #endif
