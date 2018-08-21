@@ -52,6 +52,8 @@ int main() {
         exit(-1);
     }
 
+    set_ker(kernel, kernel_size, kernel_dim);
+
     TCHAR *image_file;
     int image_size;
     float *image;
@@ -60,16 +62,8 @@ int main() {
         exit(-1);
     }
 
-    XTime start, end;
-    XTime_GetTime(&start);
-
-    // unsigned short width = 10;
     XConv2d_Set_wdth(&instptr, image_dim[0]);
-    // unsigned int height = 10;
     XConv2d_Set_hght(&instptr, image_dim[1]);
-
-
-    set_ker(kernel, kernel_size, kernel_dim);
 
     printf("Starting Conv2D...\n");
     if (XConv2d_IsReady(&instptr)) {
@@ -80,7 +74,13 @@ int main() {
     }
     printf("Started.\n");
 
-    float result[100];
+    float *result;
+    result = (float*)calloc(image_dim[0]*image_dim[1], sizeof(float));
+
+    XTime start, end;
+    XTime_GetTime(&start);
+
+
     Xil_DCacheFlushRange((unsigned)image, image_size*sizeof(float));
     Xil_DCacheInvalidateRange((unsigned)result, image_dim[0]*image_dim[1]*sizeof(float));
 
