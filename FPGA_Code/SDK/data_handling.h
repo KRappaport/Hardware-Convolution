@@ -10,6 +10,8 @@
 #include <stdlib.h>
 #include "xparameters.h"
 #include "xstatus.h"
+#include "xaxidma.h"
+#include "xtime_l.h"
 #include "xsdps.h"
 #include "ff.h"
 
@@ -20,5 +22,7 @@ int read_image(float **image, TCHAR *filename);
 int read_kernel(float **kernel, TCHAR *filename);
 
 int read_result(float **cmpr_result, TCHAR *filename);
+
+double conv_image(XAxiDma *axidma, float *image, int image_size, float *result, int result_size);
 
 #endif
