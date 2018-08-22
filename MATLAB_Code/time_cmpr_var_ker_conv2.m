@@ -15,8 +15,6 @@ pad = bitshift(depth, -1);
 
 basenameimg = './test_data/var_ker/depth3/img';
 
-mat_result = zeros(32,32);
-
 conv_2d_time = zeros(1,4);
 conv2d_time = zeros(1,4);
 mat_time = zeros(1,4);
