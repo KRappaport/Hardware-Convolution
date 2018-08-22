@@ -1,5 +1,5 @@
 % This script is used to compare the run times of conv_2d, conv2d, and
-% convn (MATLAB's function), for 2D convolution between an image with different
+% MATLAB's NN tool box, for 2D convolution between an image with different
 % size and a kernel with constant sizes.
 
 
