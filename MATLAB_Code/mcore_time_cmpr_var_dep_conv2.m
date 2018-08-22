@@ -21,12 +21,12 @@ else
 end
 
 
-conv_2d_time = zeros(1,252);
-conv_2d_mult_core_time = zeros(1,252);
-conv2d_time = zeros(1,252);
-conv2d_mult_core_time = zeros(1,252);
-bytes1 = zeros(ncores,2,252);
-bytes2 = zeros(ncores,2,252);
+conv_2d_time = zeros(1,11);
+conv_2d_mult_core_time = zeros(1,11);
+conv2d_time = zeros(1,11);
+conv2d_mult_core_time = zeros(1,11);
+bytes1 = zeros(ncores,2,11);
+bytes2 = zeros(ncores,2,11);
 
 
 statuss = 'Status:    ';

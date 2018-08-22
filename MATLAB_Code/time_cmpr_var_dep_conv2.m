@@ -11,6 +11,8 @@ end
 
 ker_dim = 3;
 
+pad = bitshift(ker_dim, -1);
+
 basenameimg = './test_data/var_dep/dim3/img';
 
 conv_2d_time = zeros(1,11);
@@ -28,7 +30,6 @@ for run_number = 1:run_amount
     for d_s = 1:11
         filename = sprintf('%s_%dx%dx%d_%d.tdatb', basenameimg, 32, 32, d_s, cast(run_number,'uint16'));
         [in,dimimg] = read_test_image(filename);
-        pad = bitshift(d_s, -1);
         net = matlab_NN_create(32, d_s, ker_dim, 1, pad, run_number);
 
         tic;
