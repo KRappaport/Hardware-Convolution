@@ -20,16 +20,17 @@ mat_time = zeros(1,252);
 basenameimg = './test_data/var_img/depth3/img';
 
 statuss = 'Status:    ';
-updstat = ['0%%  [' repmat(' ', 1, run_amount) ']'];
+updstat = ['0%%  [' repmat(' ', 1, (252/4)) ']'];
 delstr = repmat('\b', 1, length(updstat) - 1);
 fprintf([statuss, updstat]);
 
-for run_number = 1:run_amount
-    time_index_ker = 1;
-    for i_s = 5:256
+time_index_ker = 1;
+
+for i_s = 5:256
+    net = matlab_NN_create(i_s, depth, 3, 1, pad, 1);
+    for run_number = 1:run_amount
         filename = sprintf('%s_%dx%dx%d_%d.tdatb', basenameimg, i_s, i_s, depth, cast(run_number,'uint16'));
         [in,dimimg] = read_test_image(filename);
-        net = matlab_NN_create(i_s, depth, 3, 1, pad, run_number);
 
         tic;
         result = conv_2d(in, net.Layers(2).Weights);
@@ -46,15 +47,14 @@ for run_number = 1:run_amount
         matlabcode_time = toc;
         mat_time(time_index_ker) = mat_time(time_index_ker) + matlabcode_time;
 
-        time_index_ker = time_index_ker+1;
-
-
     end
 
-    pdn = run_number*100/run_amount;
-    updstat = [num2str(pdn, '%4.2f') '%%  [' repmat('*', 1, run_number) repmat(' ', 1, run_amount-run_number) ']'];
+    pdn = (time_index_ker/4)*100/(252/4);
+    updstat = [num2str(pdn, '%4.2f') '%%  [' repmat('*', 1, cast((time_index_ker/4),'uint32')) repmat(' ', 1, (252/4)-cast((time_index_ker/4),'uint32')) ']'];
     fprintf([delstr, updstat]);
     delstr = repmat('\b', 1, length(updstat) - 1);
+
+    time_index_ker = time_index_ker+1;
 
 end
 

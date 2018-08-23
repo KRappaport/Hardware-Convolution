@@ -31,17 +31,18 @@ bytes2 = zeros(ncores,2,252);
 
 
 statuss = 'Status:    ';
-updstat = ['0%%  [' repmat(' ', 1, run_amount) ']'];
+updstat = ['0%%  [' repmat(' ', 1, (252/4)) ']'];
 delstr = repmat('\b', 1, length(updstat) - 1);
 fprintf([statuss, updstat]);
 
-for run_number = 1:run_amount
-    time_index_ker = 1;
-    for i_s = 5:256
+time_index_ker = 1;
+
+for i_s = 5:256
+    filename = sprintf('%s_%dx%dx%d_1.tdatb', basenameker, i_s, i_s, depth);
+    [ker,dimker] = read_test_kernel(filename);
+    for run_number = 1:run_amount
         filename = sprintf('%s_%dx%dx%d_%d.tdatb', basenameimg, i_s, i_s, depth, cast(run_number,'uint16'));
         [in,dimimg] = read_test_image(filename);
-        filename = sprintf('%s_%dx%dx%d_%d.tdatb', basenameker, i_s, i_s, depth, cast(run_number,'uint16'));
-        [ker,dimker] = read_test_kernel(filename);
 
         tic;
         reg_result = conv_2d(in,ker);
@@ -67,15 +68,14 @@ for run_number = 1:run_amount
         bytes2(:,:,time_index_ker) = bytes2(:,:,time_index_ker) + tocBytes(gcp);
         conv2d_mult_core_time(time_index_ker) = conv2d_mult_core_time(time_index_ker) + mcore_time;
 
-        time_index_ker = time_index_ker+1;
-
-
     end
 
-    pdn = run_number*100/run_amount;
-    updstat = [num2str(pdn, '%4.2f') '%%  [' repmat('*', 1, run_number) repmat(' ', 1, run_amount-run_number) ']'];
+    pdn = (time_index_ker/4)*100/(252/4);
+    updstat = [num2str(pdn, '%4.2f') '%%  [' repmat('*', 1, cast((time_index_ker/4),'uint32')) repmat(' ', 1, (252/4)-cast((time_index_ker/4),'uint32')) ']'];
     fprintf([delstr, updstat]);
     delstr = repmat('\b', 1, length(updstat) - 1);
+
+    time_index_ker = time_index_ker+1;
 
 end
 
