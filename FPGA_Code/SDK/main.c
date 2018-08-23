@@ -96,6 +96,12 @@ int main() {
 
     free(image);
 
+    status = write_result(result, image_dim, result_size, result_fil);
+    if (status == -1) {
+        free(result);
+        exit(-1);
+    }
+
     float *cmpr_result;
     int cmpr_result_size;
     cmpr_result_size = read_result(&cmpr_result, result_file);

@@ -23,6 +23,8 @@ int read_kernel(float **kernel, TCHAR *filename);
 
 int read_result(float **cmpr_result, TCHAR *filename);
 
+int write_result(float *result, unsigned short *result_dim, int result_size, TCHAR *filename);
+
 double conv_image(XAxiDma *axidma, float *image, int image_size, float *result, int result_size);
 
 #endif
