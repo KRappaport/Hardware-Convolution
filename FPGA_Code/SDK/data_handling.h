@@ -2,7 +2,7 @@
 #define _DATA_HANDLING
 
 #ifndef MAX_KER_SIZE
-#define MAX_KER_SIZE 49
+#define MAX_KER_SIZE 81
 #endif
 
 
