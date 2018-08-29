@@ -28,6 +28,10 @@ int main() {
 
     int status;
 
+    char *kernel_file;
+    char *image_file;
+    char *result_file;
+
     XConv2d instptr;
     status = xconv2d_init(&instptr);
     if (status != XST_SUCCESS) {
@@ -101,7 +105,7 @@ int main() {
     free(image);
 
 #ifndef TEST
-    status = write_result(result, image_dim, result_size, result_fil);
+    status = write_result(result, image_dim, result_size, result_file);
     if (status == -1) {
         free(result);
         exit(-1);
@@ -137,7 +141,7 @@ int main() {
     free(cmpr_result);
 #endif
 
-    
+
     free(result);
 
     return 0;
