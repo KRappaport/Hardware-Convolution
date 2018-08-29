@@ -12,6 +12,10 @@
 #include "inits.h"
 #include "data_handling.h"
 
+#ifndef TEST
+#define TEST
+#endif
+
 extern unsigned short kernel_dim[3];
 extern unsigned short image_dim[3];
 
@@ -96,12 +100,16 @@ int main() {
 
     free(image);
 
+#ifndef TEST
     status = write_result(result, image_dim, result_size, result_fil);
     if (status == -1) {
         free(result);
         exit(-1);
     }
+#endif
 
+
+#ifdef TEST
     float *cmpr_result;
     int cmpr_result_size;
     cmpr_result_size = read_result(&cmpr_result, result_file);
@@ -125,10 +133,12 @@ int main() {
            return(0);
         }
     }
-
     printf("TEST PASSED!\n");
-    free(result);
     free(cmpr_result);
+#endif
+
+    
+    free(result);
 
     return 0;
 }
