@@ -10,7 +10,7 @@
 #endif
 
 #ifndef MAX_KERNEL_DIM_SQR
-#define MAX_KERNEL_DIM_SQR 49
+#define MAX_KERNEL_DIM_SQR 81
 #endif
 
 #ifndef MAX_DEPTH
