@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "conv2d.h"
+#include "../src/conv2d.h"
 #include "test_bench.h"
 
 int main() {
@@ -28,17 +28,14 @@ int main() {
         return(-1);
     }
     size_t data_size = dim[0]*dim[1];
-    if (fread(ker[0], sizeof(float), data_size, fp_ker) != data_size) {
-        perror("Problem reading kernel!");
-        fclose(fp_ker);
-        return(-1);
+    for (i = 0; i < dim[2]; i++) {
+        if (fread(ker[i], sizeof(float), data_size, fp_ker) != data_size) {
+            perror("Problem reading kernel!");
+            fclose(fp_ker);
+            return(-1);
+        }
     }
     fclose(fp_ker);
-    for (i = 0; i < KERNEL_DIM_SQR; i++) {
-        ker[1][i] = ker[0][i];
-        ker[2][i] = ker[0][i];
-        // printf("ker[0][%d] = %f\n", i, ker[0][i]);
-    }
 
 
     if ((fp_img = fopen(IMAGE_FILE, "rb")) == NULL) {
