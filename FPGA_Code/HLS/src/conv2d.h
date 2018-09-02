@@ -43,6 +43,8 @@
 
 #include <hls_stream.h>
 #include <ap_int.h>
+
+// A structure for streamed items
 template<int D,int U,int TI,int TD>
   struct ap_axis_fp{
     float            data;
@@ -53,9 +55,11 @@ template<int D,int U,int TI,int TD>
     ap_uint<TI>      id;
     ap_uint<TD>      dest;
   };
-
+// Make it into a data type
 typedef ap_axis_fp <32,1,1,1> AXIS_STRUCT;
+// Mkae the stream of the structure into a data type
 typedef hls::stream<AXIS_STRUCT> AXIS_PORT;
+// Create a data type for the FIFOs used for the delay lines
 typedef hls::stream<float> FP_STREAM;
 
 void conv2d(AXIS_PORT &img, float ker[MAX_DEPTH][MAX_KERNEL_DIM_SQR], unsigned short wdth, unsigned int hght, AXIS_PORT &img_out);
