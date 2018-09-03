@@ -1,7 +1,9 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "xparameters.h"
 #include "xstatus.h"
 #include "xaxidma.h"
+#include "xil_cache.h"
 #include "xtime_l.h"
 #include "data_handling.h"
 
@@ -17,7 +19,7 @@ double conv_image(XAxiDma *axidma, float *image, int image_size, float *result, 
     printf("Convolution starting...\t\t");
     XTime_GetTime(&start);
 
-    status = XAxiDma_SimpleTransfer(&axidma, (u32)image, image_size*sizeof(float), XAXIDMA_DMA_TO_DEVICE);
+    status = XAxiDma_SimpleTransfer(axidma, (u32)image, image_size*sizeof(float), XAXIDMA_DMA_TO_DEVICE);
     if (status != XST_SUCCESS) {
         printf("ERROR: Image transfer failed!\n");
         free(image);
@@ -25,7 +27,7 @@ double conv_image(XAxiDma *axidma, float *image, int image_size, float *result, 
         return(-1.0f);
     }
 
-    status = XAxiDma_SimpleTransfer(&axidma, (u32)result, result_size*sizeof(float), XAXIDMA_DEVICE_TO_DMA);
+    status = XAxiDma_SimpleTransfer(axidma, (u32)result, result_size*sizeof(float), XAXIDMA_DEVICE_TO_DMA);
     if (status != XST_SUCCESS) {
         printf("ERROR: Result transfer failed!\n");
         free(image);
@@ -33,7 +35,7 @@ double conv_image(XAxiDma *axidma, float *image, int image_size, float *result, 
         return(-1.0f);
     }
 
-    while (XAxiDma_Busy(&axidma, XAXIDMA_DEVICE_TO_DMA)) {
+    while (XAxiDma_Busy(axidma, XAXIDMA_DEVICE_TO_DMA)) {
         /* code */
     }
     XTime_GetTime(&end);
@@ -41,5 +43,6 @@ double conv_image(XAxiDma *axidma, float *image, int image_size, float *result, 
 
     Xil_DCacheInvalidateRange((unsigned)result, result_size*sizeof(float));
 
-    return((double)((end - start)/COUNTS_PER_SECOND));
+    double exec_time = (double)(end - start)/COUNTS_PER_SECOND;
+    return(exec_time);
 }
