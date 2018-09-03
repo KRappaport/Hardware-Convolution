@@ -22,7 +22,7 @@ int write_result(float *result, unsigned short *result_dim, int result_size, TCH
         f_close(&fp);
         return(-1);
     } else if (byteswrote != (2*sizeof(short))) {
-        printf("ERROR: Failed to write result dimensions! \t Bytes Read: %d\n", byteswrote);
+        printf("ERROR: Failed to write result dimensions! \t Bytes Written: %d\n", byteswrote);
         f_close(&fp);
         return(-1);
     }
@@ -32,8 +32,8 @@ int write_result(float *result, unsigned short *result_dim, int result_size, TCH
         printf("ERROR: Failed to write result! \t Error Code: %d\n", res);
         f_close(&fp);
         return(-1);
-    } else if (byteswrote != (result_size*sizeof(short))) {
-        printf("ERROR: Failed to write result! \t Bytes Read: %d\n", byteswrote);
+    } else if (byteswrote != (result_size*sizeof(float))) {
+        printf("ERROR: Failed to write result! \t Bytes Written: %d\n", byteswrote);
         f_close(&fp);
         return(-1);
     }
