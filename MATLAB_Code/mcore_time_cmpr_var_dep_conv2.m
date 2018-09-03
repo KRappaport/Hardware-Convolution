@@ -98,7 +98,7 @@ plot(d_s,conv_2d_mult_core_time.*1E3);
 title({'Run Time for Various Depths:', 'conv_2d vs. conv_2d_mult_core'}, 'Interpreter', 'none');
 xlabel('depth');
 ylabel('time [ms]');
-legend('conv\_2d','conv\_2d\_mult\_core','Location','northwest');
+legend('conv\_2d','conv\_2d\_mult\_core','Location','best');
 hold off;
 
 %double window plot
@@ -140,7 +140,7 @@ plot(d_s,conv2d_mult_core_time.*1E3);
 title({'Run Time for Various Depths:', 'conv2d vs. conv2d_mult_core'}, 'Interpreter', 'none');
 xlabel('depth');
 ylabel('time [ms]');
-legend('conv2d','conv2d\_mult\_core','Location','northwest');
+legend('conv2d','conv2d\_mult\_core','Location','best');
 hold off;
 
 %double window plot
@@ -182,7 +182,7 @@ plot(d_s,conv2d_mult_core_time.*1E3);
 title({'Run Time for Various Depths:', 'conv_2d_mult_core vs. conv2d_mult_core'}, 'Interpreter', 'none');
 xlabel('depth');
 ylabel('time [ms]');
-legend('conv\_2d\_mult\_core','conv2d\_mult\_core','Location','northwest');
+legend('conv\_2d\_mult\_core','conv2d\_mult\_core','Location','best');
 hold off;
 
 %double window plot
