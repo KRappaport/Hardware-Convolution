@@ -119,7 +119,7 @@ void conv2d(AXIS_PORT &img, float ker[MAX_DEPTH][MAX_KERNEL_DIM_SQR], unsigned s
                         mult_result[HIGH_KER_SQR_INDX-i-k] = 0;
                     }
                 }
-            } //else {                     // For the left edge of the image
+            } else {                     // For the left edge of the image
                 for (i = 0; i < (EDGE_AMOUNT-col); i++) {
                     for (k = 0; k < KERNEL_DIM_SQR; k += KERNEL_DIM) {
 #pragma HLS pipeline
