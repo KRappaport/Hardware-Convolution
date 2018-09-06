@@ -41,7 +41,11 @@ void conv2d(AXIS_PORT &img, float ker[MAX_DEPTH][MAX_KERNEL_DIM_SQR], unsigned s
     unsigned int row, done;
     unsigned short initial_grbg = (width*EDGE_AMOUNT) + EDGE_AMOUNT;
     unsigned short hold_indx1, hold_indx2;
+#if KERNEL_DIM == 7
     unsigned short rght_edg_cmp = width - EDGE_AMOUNT;
+#else
+    short rght_edg_cmp = EDGE_AMOUNT - width;
+#endif
 
 // Convolution start
     for (row = 0; row < height; row++) {
@@ -59,7 +63,16 @@ void conv2d(AXIS_PORT &img, float ker[MAX_DEPTH][MAX_KERNEL_DIM_SQR], unsigned s
             current_pxl[0] = img.read();
             for (mult_indx = 0; mult_indx < KERNEL_DIM_SQR; mult_indx++) {
 #pragma HLS UNROLL factor=27
+#if KERNEL_DIM == 7
                 mult_result[mult_indx] = current_pxl[0].data*kernel[0][mult_indx];
+#else // Not done for kernel dimension of 7 since HLS could not sythesize it (tried on 7x7x3 possibly can work for a different depth)
+                if (((mult_indx % KERNEL_DIM) >= ((unsigned)(KERNEL_DIM - EDGE_AMOUNT + col))) || ((mult_indx % KERNEL_DIM) <= ((signed)(rght_edg_cmp + col)))) {
+// Zero it since this an edge case so the pixel isn't multiplied with that element of the kernel
+                    mult_result[mult_indx] = 0;
+                } else {
+                    mult_result[mult_indx] = current_pxl[0].data*kernel[0][mult_indx];
+                }
+#endif
             }
 
 // Multpily the remainder of the depths fro the pixel with their kernel and sum
@@ -73,10 +86,25 @@ void conv2d(AXIS_PORT &img, float ker[MAX_DEPTH][MAX_KERNEL_DIM_SQR], unsigned s
                 current_pxl[depth] = img.read();
                 for (mult_indx = 0; mult_indx < KERNEL_DIM_SQR; mult_indx++) {
 #pragma HLS UNROLL factor=27
+#if KERNEL_DIM == 7
                     mult_result[mult_indx] += current_pxl[depth].data*kernel[depth][mult_indx];
+#else // Not done for kernel dimension of 7 since HLS could not sythesize it (tried on 7x7x3 possibly can work for a different depth)
+                    if (((mult_indx % KERNEL_DIM) >= ((unsigned)(KERNEL_DIM - EDGE_AMOUNT + col))) || ((mult_indx % KERNEL_DIM) <= ((signed)(rght_edg_cmp + col)))) {
+// Continue since this an edge case so the pixel isn't multiplied with that element of the kernel
+                        continue;
+                    } else {
+                        mult_result[mult_indx] += current_pxl[depth].data*kernel[depth][mult_indx];
+                    }
+#endif
                 }
             }
 
+// Only used for a kernel with a dimension of 7 since the other method (which
+// is better) would not synthesize for it (no errors were recieved it was just
+// not able to do it and stopped when it ran out of RAM which there was about
+// 190GB of RAM available).  Sythesizing was only attempted for a 7x7x3 so it
+// is possible that it can synthesize for a different depth.
+#if KERNEL_DIM == 7
 // Zero out incorrect multiplication (for pixels along the edge of the image
 // which  shouldn't be multiplied with certain elements of the kernel and thus
 // must be zeroed in order that it doesn't affect the results)
@@ -85,23 +113,25 @@ void conv2d(AXIS_PORT &img, float ker[MAX_DEPTH][MAX_KERNEL_DIM_SQR], unsigned s
                 for (i = KERNEL_DIM_1; i > (EDGE_AMOUNT + (width-col) - 1); i--) {
                     for (k = 0; k < KERNEL_DIM_SQR; k += KERNEL_DIM) {
 #pragma HLS pipeline
-#if !((KERNEL_DIM == 7) && (DEPTH > 8)) && !(KERNEL_DIM > 8)
+#if !((KERNEL_DIM == 7) && (DEPTH > 8))
 #pragma HLS UNROLL factor=3
 #endif
                         mult_result[HIGH_KER_SQR_INDX-i-k] = 0;
                     }
                 }
-            } else {                     // For the left edge of the image
+            } //else {                     // For the left edge of the image
                 for (i = 0; i < (EDGE_AMOUNT-col); i++) {
                     for (k = 0; k < KERNEL_DIM_SQR; k += KERNEL_DIM) {
 #pragma HLS pipeline
-#if !((KERNEL_DIM == 7) && (DEPTH > 8)) && !(KERNEL_DIM > 8)
+#if !((KERNEL_DIM == 7) && (DEPTH > 8))
 #pragma HLS UNROLL factor=3
 #endif
                         mult_result[HIGH_KER_SQR_INDX-i-k] = 0;
                     }
                 }
             }
+#endif
+
 
 // The multiplication results are summed with previous multiplication and
 // inserted into a hold or delay line
