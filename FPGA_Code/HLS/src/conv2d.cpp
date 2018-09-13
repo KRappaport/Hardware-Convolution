@@ -65,7 +65,7 @@ void conv2d(AXIS_PORT &img, float ker[MAX_DEPTH][MAX_KERNEL_DIM_SQR], unsigned s
 #pragma HLS UNROLL factor=27
 #if KERNEL_DIM == 7
                 mult_result[mult_indx] = current_pxl[0].data*kernel[0][mult_indx];
-#else // Not done for kernel dimension of 7 since HLS could not sythesize it (tried on 7x7x3 possibly can work for a different depth)
+#else // Not done for kernel dimension of 7 since HLS could not synthesize it (tried on 7x7x3 possibly can work for a different depth)
                 if (((mult_indx % KERNEL_DIM) >= ((unsigned)(KERNEL_DIM - EDGE_AMOUNT + col))) || ((mult_indx % KERNEL_DIM) <= ((signed)(rght_edg_cmp + col)))) {
 // Zero it since this an edge case so the pixel isn't multiplied with that element of the kernel
                     mult_result[mult_indx] = 0;
@@ -75,7 +75,7 @@ void conv2d(AXIS_PORT &img, float ker[MAX_DEPTH][MAX_KERNEL_DIM_SQR], unsigned s
 #endif
             }
 
-// Multpily the remainder of the depths fro the pixel with their kernel and sum
+// Multiply the remainder of the depths for the pixel with their kernel and sum
 // the appropriate multiplication results along the depths
             for (depth = 1; depth < DEPTH; depth++) {
 #if KERNEL_DIM > 6
@@ -88,7 +88,7 @@ void conv2d(AXIS_PORT &img, float ker[MAX_DEPTH][MAX_KERNEL_DIM_SQR], unsigned s
 #pragma HLS UNROLL factor=27
 #if KERNEL_DIM == 7
                     mult_result[mult_indx] += current_pxl[depth].data*kernel[depth][mult_indx];
-#else // Not done for kernel dimension of 7 since HLS could not sythesize it (tried on 7x7x3 possibly can work for a different depth)
+#else // Not done for kernel dimension of 7 since HLS could not synthesize it (tried on 7x7x3 possibly can work for a different depth)
                     if (((mult_indx % KERNEL_DIM) >= ((unsigned)(KERNEL_DIM - EDGE_AMOUNT + col))) || ((mult_indx % KERNEL_DIM) <= ((signed)(rght_edg_cmp + col)))) {
 // Continue since this an edge case so the pixel isn't multiplied with that element of the kernel
                         continue;
@@ -100,9 +100,9 @@ void conv2d(AXIS_PORT &img, float ker[MAX_DEPTH][MAX_KERNEL_DIM_SQR], unsigned s
             }
 
 // Only used for a kernel with a dimension of 7 since the other method (which
-// is better) would not synthesize for it (no errors were recieved it was just
+// is better) would not synthesize for it (no errors were received it was just
 // not able to do it and stopped when it ran out of RAM which there was about
-// 190GB of RAM available).  Sythesizing was only attempted for a 7x7x3 so it
+// 190GB of RAM available).  Synthesizing was only attempted for a 7x7x3 so it
 // is possible that it can synthesize for a different depth.
 #if KERNEL_DIM == 7
 // Zero out incorrect multiplication (for pixels along the edge of the image
