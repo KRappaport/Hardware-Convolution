@@ -1,7 +1,7 @@
 function [test_data, Dim] = read_test_image(filename)
 % function: Read test image file
 % The image file has the structure of 3 unsigned shorts for the WxHxD.  Then
-% the actual image valuse of type float.  The image is stored row by row with
+% the actual image values of type float.  The image is stored row by row with
 % each depth of a given row and column kept together (similar to an actual
 % image file.)
 %

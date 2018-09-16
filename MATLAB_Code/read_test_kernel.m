@@ -1,10 +1,10 @@
 function [test_data, Dim] = read_test_kernel(filename)
 % function: Read test kernel from file
 % The kernel file has the structure of 3 unsigned shorts for the WxHxD.  Then
-% the actual kernel valuse of type float.  The kernel is divided up by the
+% the actual kernel values of type float.  The kernel is divided up by the
 % depths.  The first set of WxH values are for the zeroth depth and the second
 % set are for the first depth and so on and so forth
-% 
+%
 
     fid = fopen(filename, 'r');
     if fid == -1

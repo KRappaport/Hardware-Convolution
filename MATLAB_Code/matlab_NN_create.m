@@ -1,4 +1,4 @@
-% Use to create a neural net from MATLAB.  The aruments of the function are
+% Use to create a neural net from MATLAB.  The arguments of the function are
 % input_W_H for the image dimensions (square image only), input_C for the depth,
 % kernel_dim for the kernel dimensions (square odd kernel only), n_kernels for
 % the number of kernels to create, padding_size in order to keep the result
