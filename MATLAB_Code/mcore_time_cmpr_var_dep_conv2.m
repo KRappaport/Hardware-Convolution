@@ -10,7 +10,8 @@ else
 end
 
 
-
+% The base names should be changed to reflect the base name that was used in
+% creating the test data.  See the misc directory for more.
 basenameimg = './test_data/var_dep/dim3/img';
 basenameker = './test_data/var_dep/dim3/ker3';
 

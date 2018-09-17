@@ -13,6 +13,8 @@ ker_dim = 3;
 
 pad = bitshift(ker_dim, -1);
 
+% The base names should be changed to reflect the base name that was used in
+% creating the test data.  See the misc directory for more.
 basenameimg = './test_data/var_dep/dim3/img';
 
 conv_2d_time = zeros(1,11);

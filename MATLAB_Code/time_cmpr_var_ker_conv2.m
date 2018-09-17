@@ -13,6 +13,8 @@ end
 depth = 3;
 pad = bitshift(depth, -1);
 
+% The base names should be changed to reflect the base name that was used in
+% creating the test data.  See the misc directory for more.
 basenameimg = './test_data/var_ker/depth3/img';
 
 conv_2d_time = zeros(1,4);

@@ -17,6 +17,8 @@ conv_2d_time = zeros(1,252);
 conv2d_time = zeros(1,252);
 mat_time = zeros(1,252);
 
+% The base names should be changed to reflect the base name that was used in
+% creating the test data.  See the misc directory for more.
 basenameimg = './test_data/var_img/depth3/img';
 
 statuss = 'Status:    ';
