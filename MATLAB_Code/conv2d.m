@@ -1,21 +1,21 @@
 function final_result = conv2d(input,kernel)
 
     [input_x,input_y,input_z] = size(input);
-    [kernel_x,kernel_y,kernel_z] = size(kernel);   
+    [kernel_x,kernel_y,kernel_z] = size(kernel);
 
     %get the size of the input matrix and kernel matrix and check that 'z'
-    %dimensions match, if dont then exit
-    
+    %dimensions match, if not then exit
+
     if(kernel_z ~= input_z)
         disp('3D mismatch!');
         exit
     end
 
 %{
-    WE ARE ASSUMING ALL KERNALS ARE ODD SIZED so this is commented out
+    WE ARE ASSUMING ALL KERNELS ARE ODD SIZED so this is commented out
 
-    %check if dimensions of kernal are even or odd
-    
+    %check if dimensions of kernel are even or odd
+
     kernel_x_is_even = 0;
     kernel_y_is_even = 0;
 
@@ -26,7 +26,7 @@ function final_result = conv2d(input,kernel)
         kernel_y_is_even = 1;
     end
 %}
-    
+
     %padding amount per dimension will be the lower half of the kernel
     %size, bc at the edges the kernel will only overlap with the image for
     %the majority (ceiling) of the dimension
@@ -50,7 +50,7 @@ function final_result = conv2d(input,kernel)
     floor_ker_x = floor(kernel_x/2);
     floor_ker_y = floor(kernel_y/2);
 
-%%%% THE FOLLOWING IS FOR A CONSIDRATION OF POSSIBILITY OF EVEN KERNAL
+%%%% THE FOLLOWING IS FOR A CONSIDERATION OF POSSIBILITY OF EVEN KERNEL
 %     if(kernel_x_is_even == 1)
 %         padd_x = kernel_x-1;
 %         snip_left_end_x = floor_ker_x-1;
@@ -60,7 +60,7 @@ function final_result = conv2d(input,kernel)
 %         snip_left_end_x = floor_ker_x;
 %         snip_right_end_x = floor_ker_x;
 %     end
-% 
+%
 %     if(kernel_x_is_even == 1)
 %         padd_y = kernel_y-1;
 %         snip_left_end_y = floor_ker_x-1;
@@ -71,7 +71,7 @@ function final_result = conv2d(input,kernel)
 %         snip_right_end_y = floor_ker_y;
 %     end
 
-%%% THE FOlOWING IS FOR CONSIDERATION OF ONLY ODD KERNALS
+%%% THE Following IS FOR CONSIDERATION OF ONLY ODD KERNELS
 
     padd_x = 2*floor_ker_x;
     snip_left_end_x = floor_ker_x;
@@ -80,27 +80,27 @@ function final_result = conv2d(input,kernel)
     padd_y = 2*floor_ker_y;
     snip_left_end_y = floor_ker_y;
     snip_right_end_y = floor_ker_y;
-    
-    
+
+
 
     %make a new matrix called "padd_input" which adds zero padding to the
     %input matrix
 
     padd_size_x = input_x+padd_x;
-    padd_size_y = input_y+padd_y; 
-    
+    padd_size_y = input_y+padd_y;
+
     padd_input = zeros(padd_size_x,padd_size_y,input_z);
 
     %place the input matrix inside the zeros matrix to make padded matrix
     padd_input((padd_x/2 +1):(padd_x/2+input_x),...
         (padd_y/2+1):(padd_y/2+input_y),...
         (1:input_z)) = input;
-    
-    %First start in bottom left hand corner, calling the verticle direction 'y'
+
+    %First start in bottom left hand corner, calling the vertical direction 'y'
     %and the horizontal direction 'x'. There will be no movements in the 'z'
     %("into the board") direction.
 
-    %Start by moving the kernal upon image from left to right (negative to
+    %Start by moving the kernel upon image from left to right (negative to
     %positive 'x') then down to up (negative to positive 'y')
 
     %due to the starting of the movements in the "bottom-left"
@@ -117,23 +117,23 @@ function final_result = conv2d(input,kernel)
 
     %movement of the kernel on the input on the input starting in the 'x'
     %direction
-    
+
     %each slice of the 'z' direction gets its own convolution
 
-    
-     %flip kernel in 'x' and 'y' dimenssion
+
+     %flip kernel in 'x' and 'y' dimension
     for z = 1:kernel_z
         kernel(:,:,z)=flip(kernel(:,:,z),1);
         kernel(:,:,z)=flip(kernel(:,:,z),2);
     end
-   
+
     input_snip = zeros(kernel_x,kernel_y,kernel_z);
     result = zeros(input_x,input_y,input_z);
     final_result = zeros(input_x,input_y);
     multiplications = 0;
     summation1D =0;
     summation2D =0;
-    
+
     for z_slice = 1:input_z
 
         for result_x = 1:input_x
@@ -142,8 +142,8 @@ function final_result = conv2d(input,kernel)
             for result_y = 1:input_y
 
                 %start the 3D calculations
-                %each iteration take a snippit of input and mult by kernal
-              
+                %each iteration take a snippet of input and mult by kernel
+
                 input_snip = padd_input( ((result_x+floor_ker_x-snip_left_end_x):(result_x+floor_ker_x+snip_right_end_x)),...
                         ((result_y+floor_ker_y-snip_left_end_y):(result_y+floor_ker_y+snip_right_end_y)),...
                         z_slice);
@@ -157,8 +157,7 @@ function final_result = conv2d(input,kernel)
         end
     end
 
-final_result = sum(result,3)./input_z;
-%the final result of an index is the average of the convolutions along the
+final_result = sum(result,3);
+%the final result is the sum of elements along the 'z' axis
 %z dimension of that x,y index
 end
-    

@@ -1,4 +1,13 @@
-function resultant = conv_2d_naive(input,kernel)
+function resultant = conv_2d_mult_core(input,kernel,ncores)
+
+    if nargin == 2
+        ncores = 2;
+    elseif ((nargin == 3) || (isnumeric(ncores) == 1) || (ncores >= 1))
+        ncores = floor(ncores);
+    else
+        disp('Error: Problem with input arguments!');
+        return
+    end
 
     % Get dimensions of input and kernel
     [in_row_lgth, in_column_lgth, in_depth] = size(input);
@@ -14,20 +23,16 @@ function resultant = conv_2d_naive(input,kernel)
     ker_center_column = floor(ker_column_lgth/2) + 1;
 
     % Initialize resultant to size of input
-    resultant = zeros(in_row_lgth, in_column_lgth, in_depth);
+    resultant = zeros(in_row_lgth, in_column_lgth);
 
     % Actual convolution starts here:
-    % First for loop sets the third dimension, location in the third dimension
-    % refers to a 2D matrix that will be convolved (the convolution is 2D the
-    % third dimension can be seen as just a list of 2D matrices and the convolution
-    % only takes place between the first two dimensions of input and kernel for
-    % equal third dimension indices).
-    % Second 2 for loops determine the element of the result to find
-    % and the final 2 match up the proper input and kernel elements.
+    % First 2 for loops determine the element of the result to find
+    % and the second 2 match up the proper input and kernel elements.
+    % The final inner most for loop applies the 2D convolution to each of the
+    % matrices along the third dimension and sums the results.
     % In total 5 nested for loops.
 
-    for result_depth = 1:in_depth
-        for result_row = 1:in_row_lgth
+        parfor (result_row = 1:in_row_lgth, ncores)
             ker_base_row = ker_center_row + result_row;
 
             % Set start row value such that input and kernel are in bounds
@@ -63,16 +68,16 @@ function resultant = conv_2d_naive(input,kernel)
                     ker_row = ker_base_row - in_row;
 
                     for in_column = start_column:last_column
+                        for result_depth = 1:in_depth
+                            resultant(result_row, result_column) ...
+                                = resultant(result_row, result_column) ...
+                                + (input(in_row, in_column, result_depth) ...
+                                *kernel(ker_row, (ker_base_column - in_column), result_depth));
 
-                        resultant(result_row, result_column, result_depth) ...
-                            = resultant(result_row, result_column, result_depth) ...
-                            + (input(in_row, in_column, result_depth) ...
-                            *kernel(ker_row, (ker_base_column - in_column), result_depth));
-
+                        end
                     end
                 end
             end
         end
-    end
 
 end
