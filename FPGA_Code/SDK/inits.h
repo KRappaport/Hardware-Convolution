@@ -2,7 +2,7 @@
 #define _INITS
 
 #include <stdio.h>
-#include "xconv2d.h"
+#include "xconv_block_1.h"
 #include "xaxidma.h"
 #include "xparameters.h"
 #include "xsdps.h"

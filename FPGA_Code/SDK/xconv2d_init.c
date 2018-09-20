@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "xconv2d.h"
+#include "xconv_block_1.h"
 #include "inits.h"
 #include "xparameters.h"
 
