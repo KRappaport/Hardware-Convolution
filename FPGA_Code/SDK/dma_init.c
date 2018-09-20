@@ -26,7 +26,6 @@ int dma_init(XAxiDma *axidma) {
     }
 
     XAxiDma_IntrDisable(axidma, XAXIDMA_IRQ_ALL_MASK, XAXIDMA_DEVICE_TO_DMA);
-    XAxiDma_IntrDisable(axidma, XAXIDMA_IRQ_ALL_MASK, XAXIDMA_DMA_TO_DEVICE);
 
     return(XST_SUCCESS);
 }
