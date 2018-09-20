@@ -12,6 +12,7 @@ for k = 1:20
         result1 = conv_2d(in,ker);
         result1mc = conv_2d_mult_core(in,ker);
         result2 = conv2d(in,ker);
+        result2mc = conv2d_mult_core(in,ker);
 
         mat_result = zeros(11,11);
         for z = 1:11
@@ -22,11 +23,14 @@ for k = 1:20
         A = ismembertol(result1, mat_result, 1E-12);
         C = ismembertol(result1mc, mat_result, 1E-12);
         B = ismembertol(result2, mat_result, 1E-12);
+        D = ismembertol(result2mc, mat_result, 1E-12);
 
-        if (isequal(A,B,C,true_array) == 0)
+        if (isequal(A,B,C,D,true_array) == 0)
             disp('Results do not match up!')
             return
         end
 
     end
 end
+
+disp('Results match up');
