@@ -7,7 +7,19 @@
 #endif
 
 #ifndef KER_Z
-#define KER_Z 3
+#define KER_Z 1
+#endif
+
+#ifndef KER_X_MAX
+#define KER_X_MAX 5
+#endif
+
+#ifndef	KER_Y_MAX
+#define KER_Y_MAX 5
+#endif
+
+#ifndef KER_Z_MAX
+#define KER_Z_MAX 11
 #endif
 
 #ifndef	BR_X
@@ -36,25 +48,23 @@ template<int D,int U,int TI,int TD>
 typedef ap_axis_fp <32,1,1,1> AXIS_STRUCT;
 typedef hls::stream<AXIS_STRUCT> AXIS_PORT;
 
-void conv_block(
-									float kernel_input[KER_X][KER_Y][KER_Z],
-									float im_BR[256][7][11],
-//									float im_BR_0[256][7][11],float im_BR_1[256][7][11],float im_BR_2[256][7][11],float im_BR_3[256][7][11],
-									AXIS_PORT &out_0,AXIS_PORT &out_1,AXIS_PORT &out_2,AXIS_PORT &out_3,
-									int im_x,int im_y,
+void conv_block_1(
+									float input_kernel[KER_X_MAX][KER_Y_MAX][KER_Z_MAX],
+									float im_BR[256][KER_Y_MAX][11],
+									AXIS_PORT &out_stream,
+									int im_x,
+									int im_y,
 									int rslt_line_nmbr,
-//									int rslt_line_nmbr_0,int rslt_line_nmbr_1,int rslt_line_nmbr_2,int rslt_line_nmbr_3
-									char busy_0, char busy_1, char busy_2, char busy_3,
-									char stall
+									int ker_new
 									);
 
-void result_block_4l(	AXIS_PORT &in_strm_0, AXIS_PORT &in_strm_1, AXIS_PORT &in_strm_2, AXIS_PORT &in_strm_3,
-					int im_y,
-					AXIS_PORT &out_strm);
+ void result_block(	AXIS_PORT &in_strm_0, AXIS_PORT &in_strm_1, AXIS_PORT &in_strm_2,
+    						int im_y,
+    						AXIS_PORT &out_strm);
 
-void kernel_flip(	float input_kernel[KER_X][KER_Y][KER_Z],
-					float flipped_kernel_0[KER_X][KER_Y][KER_Z],
-					float flipped_kernel_1[KER_X][KER_Y][KER_Z],
-					float flipped_kernel_2[KER_X][KER_Y][KER_Z],
-					float flipped_kernel_3[KER_X][KER_Y][KER_Z],
-					int ready);
+void result_block_4l(	AXIS_PORT &in_strm_0, AXIS_PORT &in_strm_1, AXIS_PORT &in_strm_2,
+		 	 	 	 AXIS_PORT &in_strm_3,
+    						int im_y,
+    						AXIS_PORT &out_strm);
+
+
