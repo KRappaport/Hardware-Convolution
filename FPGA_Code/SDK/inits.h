@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include "xconv_block_1.h"
+#include "xresult_block_4l.h"
 #include "xaxidma.h"
 #include "xparameters.h"
 #include "xsdps.h"
@@ -11,6 +12,8 @@
 
 
 int xconv_block_init(XConv_block_1 *instptr, unsigned int device_id);
+
+int xresult_block_4l_init(XResult_block_4l *instptr);
 
 int dma_init(XAxiDma *axidma);
 
