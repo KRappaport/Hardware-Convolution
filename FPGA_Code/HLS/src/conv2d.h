@@ -17,10 +17,6 @@
 #define MAX_DEPTH 11
 #endif
 
-#ifndef MAX_IMG_WIDTH
-#define MAX_IMG_WIDTH 1024
-#endif
-
 #ifndef EDGE_AMOUNT
 #define EDGE_AMOUNT (KERNEL_DIM>>1)
 #endif

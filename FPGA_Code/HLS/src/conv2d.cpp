@@ -26,6 +26,8 @@ void conv2d(AXIS_PORT &img, float ker[MAX_DEPTH][MAX_KERNEL_DIM_SQR], unsigned s
 #pragma HLS ARRAY_PARTITION variable=insert_delay complete dim=0
 
     FP_STREAM delay_line[KERNEL_DIM_1];
+// This directive is used to specify the delay line as a stream
+// and to set the depth.
 #pragma HLS stream variable=delay_line depth=256
 
 // Initializations
