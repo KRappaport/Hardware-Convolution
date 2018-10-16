@@ -165,7 +165,6 @@ int main() {
 
 // Unmount the SD card.
     f_mount(0, "0:/", 0);
-    free(&fs);
 
     return 0;
 }
