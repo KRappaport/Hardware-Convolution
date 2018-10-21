@@ -185,7 +185,7 @@ plot(k_s,conv_2d_mult_core_time.*1E3);
 hold on;
 plot(k_s,conv2d_mult_core_time.*1E3);
 title({'Run Time for Various Kernel Sizes:', 'conv_2d_mult_core vs. conv2d_mult_core'}, 'Interpreter', 'none');
-xlabel('image size');
+xlabel('kernel size');
 ylabel('time [ms]');
 legend('conv\_2d\_mult\_core','conv2d\_mult\_core','Location','best');
 hold off;
@@ -196,13 +196,13 @@ hold on;
 subplot(2,1,1);
 plot(k_s,conv_2d_mult_core_time.*1E3);
 title('Run Time for Various Kernel Sizes: conv_2d_mult_core', 'Interpreter', 'none');
-xlabel('image size');
+xlabel('kernel size');
 ylabel('time [ms]');
 
 subplot(2,1,2);
 plot(k_s,conv2d_mult_core_time.*1E3,'red');
 title('Run Time for Various Kernel Sizes: conv2d_mult_core', 'Interpreter', 'none');
-xlabel('image size');
+xlabel('kernel size');
 ylabel('time [ms]');
 hold off;
 
